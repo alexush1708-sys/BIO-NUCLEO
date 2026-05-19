@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
+<title>[BIO_NUCLEO] // SALUD Y PRODUCCIÓN</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --amber:#f59e0b;--amber-dim:#92400e;--amber-dark:#451a03;
+  --green:#22c55e;--red:#ef4444;--red-dark:#7f1d1d;
+  --blue:#3b82f6;
+  --bg:#000;--surface:#0a0a0a;--surface2:#111;--surface3:#1a1a1a;
+}
+body{background:var(--bg);color:var(--amber);font-family:'Share Tech Mono',monospace;padding:1rem;line-height:1.4;-webkit-tap-highlight-color:transparent;}
+
+/* HEADER & TABS */
+header{border-bottom:2px solid var(--amber-dim);padding-bottom:1rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:.5rem;}
+header h1{font-family:'Rajdhani',sans-serif;font-size:1.8rem;letter-spacing:-1px;color:var(--amber);font-weight:700;}
+header p{font-size:.65rem;color:var(--amber-dim);margin-top:.15rem;}
+.status{font-size:.7rem;border:1px solid var(--amber-dim);padding:.4rem;background:var(--surface2);white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;}
+.pulse{animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.tabs{display:flex;gap:.5rem;margin-bottom:1.25rem;border-bottom:1px solid var(--amber-dark);padding-bottom:.7rem;flex-wrap:wrap;}
+.tab{background:none;border:1px solid var(--amber-dark);color:var(--amber-dim);font-family:'Share Tech Mono',monospace;font-size:.68rem;padding:.4rem .8rem;cursor:pointer;transition:all .2s;letter-spacing:.04em;min-height:44px;}
+.tab.active{background:var(--amber-dark);border-color:var(--amber);color:var(--amber);}
+.panel{display:none;}.panel.active{display:block;}
+
+/* LAYOUT */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1rem;}
+.card{border:1px solid var(--amber-dim);background:var(--surface);padding:1rem;}
+.card h2{font-family:'Rajdhani',sans-serif;font-size:1rem;border-bottom:1px solid var(--amber-dark);padding-bottom:.5rem;margin-bottom:1rem;text-transform:uppercase;color:var(--amber-dim);font-weight:700;}
+.inner{background:var(--surface2);padding:.8rem;margin-bottom:1rem;border:1px solid #1a1a1a;}
+.inner h3{font-size:.65rem;color:var(--amber-dim);margin-bottom:.6rem;text-transform:uppercase;letter-spacing:1px;}
+.inner.hi-amber{border-color:var(--amber-dim);}.inner.hi-amber h3{color:var(--amber);}
+.inner.hi-green{border-color:var(--green);}.inner.hi-green h3{color:var(--green);}
+
+/* EXERCISE CARDS */
+.ex-card{border:1px solid var(--amber-dark);margin-bottom:.6rem;background:var(--surface3);overflow:hidden;}
+.ex-header{display:flex;align-items:center;gap:.7rem;padding:.75rem;cursor:pointer;min-height:56px;user-select:none;}
+.ex-check{width:22px;height:22px;border:2px solid var(--amber-dim);border-radius:3px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:14px;}
+.ex-check.checked{background:var(--amber-dark);border-color:var(--amber);color:var(--amber);}
+.ex-name{font-size:.8rem;flex:1;line-height:1.3;}
+.ex-vol{font-size:.65rem;color:var(--green);text-align:right;}
+.ex-body{display:none;padding:.75rem;border-top:1px solid var(--amber-dark);background:#000;}
+.ex-body.open{display:block;}
+
+/* DRUMS */
+.drums-row{display:flex;flex-direction:column;gap:.8rem;}
+.series-config{display:flex;align-items:center;justify-content:space-between;background:var(--surface2);padding:.5rem;border:1px solid var(--amber-dark);}
+.drum-wrap{display:flex;flex-direction:column;align-items:center;gap:.2rem;}
+.drum-label{font-size:.55rem;color:var(--amber-dim);letter-spacing:.05em;}
+.drum{width:50px;height:90px;overflow:hidden;position:relative;border:1px solid var(--amber-dark);background:#000;cursor:ns-resize;touch-action:none;user-select:none;}
+.drum-inner{position:absolute;top:0;left:0;width:100%;transition:transform .15s ease-out;}
+.drum-item{height:30px;display:flex;align-items:center;justify-content:center;font-family:'Rajdhani',sans-serif;font-size:1.2rem;font-weight:700;color:var(--amber-dim);}
+.drum-item.selected{color:var(--amber);font-size:1.4rem;}
+.drum::before,.drum::after{content:'';position:absolute;left:0;right:0;height:30px;z-index:2;pointer-events:none;}
+.drum::before{top:0;background:linear-gradient(to bottom,#000 0%,transparent 100%);}
+.drum::after{bottom:0;background:linear-gradient(to top,#000 0%,transparent 100%);}
+.drum-line{position:absolute;left:0;right:0;height:30px;top:50%;transform:translateY(-50%);border-top:1px solid var(--amber-dim);border-bottom:1px solid var(--amber-dim);z-index:1;pointer-events:none;}
+
+/* BUTTONS & INPUTS */
+.btn{width:100%;padding:1rem;border:none;font-family:'Share Tech Mono',monospace;font-weight:bold;font-size:.85rem;cursor:pointer;text-transform:uppercase;min-height:54px;margin-top:.6rem;}
+.btn-return{background:var(--blue);color:#000;margin-bottom:1rem;display:none;}
+.stepper-btn{width:40px;height:40px;font-size:1.1rem;background:var(--surface2);color:var(--amber-dim);border:1px solid var(--amber-dark);font-family:'Share Tech Mono',monospace;cursor:pointer;}
+.stepper-btn.add{background:var(--amber-dark);color:var(--amber);border-color:var(--amber);}
+.stepper-val{font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;color:var(--green);min-width:36px;text-align:center;}
+input[type="number"],textarea{background:#000;color:var(--amber);border:1px solid var(--amber-dim);padding:.6rem;font-size:.85rem;width:100%;font-family:'Share Tech Mono',monospace;outline:none;}
+input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
+
+/* SUPLEMENTOS & CONSTANTES */
+.sup-block{margin-bottom:.5rem;}
+.sup-block-title{font-size:.58rem;color:var(--amber);letter-spacing:.08em;margin-bottom:.3rem;padding:.25rem .4rem;background:var(--surface3);border-left:2px solid var(--amber-dim);}
+.sup-item{display:flex;align-items:center;justify-content:space-between;padding:.5rem .3rem;border-bottom:1px solid #1a1a1a;}
+.sup-item-left{display:flex;align-items:center;gap:.5rem;}
+.sup-item-name{font-size:.72rem;}
+.sup-item-fn{font-size:.57rem;color:var(--amber-dim);}
+.const-stepper{display:flex;align-items:center;gap:.4rem;}
+.const-btn{width:28px;height:28px;background:var(--surface2);border:1px solid var(--amber-dark);color:var(--amber);cursor:pointer;font-family:'Share Tech Mono',monospace;}
+.const-val{font-family:'Rajdhani',sans-serif;font-size:1.2rem;color:var(--green);width:20px;text-align:center;}
+
+/* HISTORIAL STATS & LIST */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:.5rem;margin-bottom:1.25rem;}
+.stat-box{border:1px solid var(--amber-dark);background:var(--surface);padding:.5rem;}
+.stat-num{font-family:'Rajdhani',sans-serif;font-size:1.4rem;font-weight:700;line-height:1;color:var(--amber);}
+.stat-label{font-size:.53rem;color:var(--amber-dim);margin-top:.2rem;line-height:1.2;}
+.stat-box.highlight {border-color:var(--green);background:#001a00;}
+.stat-box.highlight .stat-num {color:var(--green);}
+
+/* MONTHLY TABS */
+.month-header { background: var(--surface2); padding: 0.6rem; border: 1px solid var(--amber-dark); cursor: pointer; font-weight: bold; margin-bottom: 0.3rem; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;}
+.month-content { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem; padding-left: 0.5rem; border-left: 2px solid var(--amber-dark); }
+.hidden { display: none !important; }
+
+.hist-list{display:flex;flex-direction:column;gap:.5rem;}
+.hist-row{display:flex;justify-content:space-between;align-items:center;padding:.6rem;background:var(--surface);border:1px solid var(--amber-dark);}
+.hist-row.perfect{border-color:var(--green);}
+.hist-date{font-size:.85rem;font-weight:bold;}
+.hist-perf{font-size:.65rem;color:var(--green);margin-top:.2rem;}
+.hist-edit-btn{background:var(--surface2);color:var(--amber);border:1px solid var(--amber-dim);padding:.3rem .6rem;font-family:'Share Tech Mono';font-size:.7rem;cursor:pointer;}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>[BIO_NUCLEO]</h1>
+    <p>SISTEMA DE SALUD, NUTRICIÓN Y PRODUCCIÓN</p>
+  </div>
+  <div class="status">
+    <div><span id="header-date">—</span> &nbsp;|&nbsp; <span class="pulse" style="color:var(--green)">AUTO-SYNC</span></div>
+    <div id="header-alert" style="color:var(--red);font-weight:bold;margin-top:.2rem;display:none;"></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" data-tab="dashboard">▣ DASHBOARD</button>
+  <button class="tab" data-tab="history">◈ HISTORIAL</button>
+</div>
+
+<div class="panel active" id="panel-dashboard">
+<button class="btn btn-return" id="btn-return-today">← VOLVER A HOY</button>
+<div class="grid">
+
+  <div class="card">
+    <h2>1. SALUD ESTRUCTURAL</h2>
+
+    <div class="inner hi-amber">
+      <h3 id="cal-title">CARGANDO RUTINA...</h3>
+      <div id="ex-cards"></div>
+    </div>
+
+    <div class="inner hi-green" id="weight-module">
+      <h3>AUDITORÍA DE MASA</h3>
+      <label style="font-size:.65rem;color:var(--green);display:block;margin-bottom:.4rem;">PESO CORPORAL (KG):</label>
+      <input type="number" id="weight-input" step="0.1" placeholder="Ej: 75.5"/>
+    </div>
+
+    <div class="inner">
+      <h3>SNC Y SISTEMA DIGESTIVO</h3>
+      
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+        <span style="font-size:.72rem;">REFLUJO (0-10)</span>
+        <div style="display:flex;align-items:center;gap:.4rem;">
+          <button class="stepper-btn" id="btn-sub-reflux">−</button>
+          <div class="stepper-val" style="color:var(--red);" id="reflux-count">0</div>
+          <button class="stepper-btn add" id="btn-add-reflux">+</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+        <span style="font-size:.72rem;">SUEÑO (h)</span>
+        <div style="display:flex;align-items:center;gap:.4rem;">
+          <button class="stepper-btn" id="btn-sub-sleep">−</button>
+          <div class="stepper-val" id="sleep-count">0</div>
+          <button class="stepper-btn add" id="btn-add-sleep">+</button>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.72rem;">MEDITACIÓN (min)</span>
+        <div style="display:flex;align-items:center;gap:.4rem;">
+          <button class="stepper-btn" id="btn-sub-med">−</button>
+          <div class="stepper-val" id="med-count">0</div>
+          <button class="stepper-btn add" id="btn-add-med">+</button>
+        </div>
+      </div>
+      <button class="btn" id="btn-med-timer" style="min-height:40px;padding:.5rem;background:var(--amber-dark);color:var(--amber);border:1px solid var(--amber);font-size:.75rem;margin-top:1rem;">◉ INICIAR 10 MINUTOS</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>2. NUTRICIÓN Y QUÍMICA</h2>
+    <div class="inner hi-amber">
+      <h3>PROTOCOLO CONSTANTES Y SUPLEMENTOS</h3>
+      <div id="sup-blocks"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. PRODUCCIÓN Y FORMACIÓN</h2>
+    
+    <div class="inner hi-green">
+      <h3>VOLUMEN (PERSISTENTE)</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;">
+        <span style="font-size:.72rem;">VÍDEOS PUBLICADOS</span>
+        <div style="display:flex;align-items:center;gap:.4rem;">
+          <button class="stepper-btn" id="btn-sub-video">−</button>
+          <div class="stepper-val" id="video-count">0</div>
+          <button class="stepper-btn add" id="btn-add-video">+</button>
+        </div>
+      </div>
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <span style="font-size:.72rem;">CURSOS COMPLETADOS</span>
+        <div style="display:flex;align-items:center;gap:.4rem;">
+          <button class="stepper-btn" id="btn-sub-course">−</button>
+          <div class="stepper-val" id="course-count">0</div>
+          <button class="stepper-btn add" id="btn-add-course">+</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="inner hi-amber" id="study-block">
+      <h3>ESTUDIOS DEL DÍA (L-V)</h3>
+      <div id="study-checks"></div>
+    </div>
+
+    <div class="inner">
+      <h3>NOTAS DE OPERACIÓN</h3>
+      <textarea id="day-notes" placeholder="Anotaciones libres..."></textarea>
+    </div>
+
+  </div>
+
+</div>
+</div>
+
+<div class="panel" id="panel-history">
+  <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
+    <h2>ARCHIVO HISTÓRICO</h2>
+    <div style="display:flex;gap:.5rem;">
+      <button id="btn-export" style="background:var(--surface2);border:1px solid var(--amber-dark);color:var(--amber-dim);padding:.4rem .6rem;cursor:pointer;font-family:'Share Tech Mono';font-size:.7rem;">↓ JSON</button>
+      <button id="btn-import" style="background:var(--surface2);border:1px solid var(--amber-dark);color:var(--amber-dim);padding:.4rem .6rem;cursor:pointer;font-family:'Share Tech Mono';font-size:.7rem;">↑ IMPORTAR</button>
+      <input type="file" id="file-import" accept=".json" style="display:none;"/>
+    </div>
+  </div>
+  <div class="stats-grid" id="stats-grid"></div>
+  <h3 style="font-size:.8rem;margin-bottom:.5rem;border-bottom:1px solid var(--amber-dark);padding-bottom:.3rem;">REGISTRO DIARIO (AGRUPADO)</h3>
+  <div class="hist-list" id="hist-list"></div>
+</div>
+
+<script>
+// --- CONFIG & CONSTANTS ---
+const DAY_START_HOUR = 4; 
+const KEYS = { history: 'v11_history', supCycles: 'v11_supCycles' };
+
+const RUTINAS = {
+  1:{t:'LUNES: EMPUJE + CORE',      e:['Fondos','Flexiones','Flexiones decl.','Extensión tríceps','Plancha'], s:[4,4,4,4,3], sec:[4]},
+  2:{t:'MARTES: TRACCIÓN + CORE',   e:['Dominadas pronas','Dominadas supinas','Remo invertido','Isométrico','Elevaciones rodillas'], s:[4,4,4,4,4], sec:[3]},
+  3:{t:'MIÉRCOLES: PIERNAS + CORE', e:['Sentadillas','Zancadas','Gemelos','Isometría pared','Plancha Lateral'], s:[4,4,4,4,3], sec:[3,4]},
+  4:{t:'JUEVES: DESCANSO',          e:['Descanso Activo / Estiramientos'], s:[], tap:true},
+  5:{t:'VIERNES: RECUPERACIÓN',     e:['Descanso Activo / Estiramientos'], s:[], tap:true},
+  6:{t:'SÁBADO: RECUPERACIÓN',      e:['Descanso Total'], s:[], tap:true},
+  0:{t:'DOMINGO: DESCANSO SNC',     e:['Descanso Total'], s:[], tap:true}
+};
+
+const SUP_PROTOCOL = [
+  { block:'🍎 CONSTANTES', type:'stepper', items:[
+    {key:'banana', name:'Plátanos', max:2},
+    {key:'eggs', name:'Huevos', max:4},
+    {key:'otherfruit', name:'Otras Frutas', max:2}
+  ]},
+  { block:'🌅 MAÑANA', type:'checkbox', items:[
+    {key:'glut_am', name:'Glutamina (5g)', cycle:0},
+    {key:'probio', name:'Probióticos', cycleLoad:28, cycleDeload:14},
+    {key:'electro', name:'Electrolitos', cycle:0},
+    {key:'melena', name:'Melena de León', cycleLoad:56, cycleDeload:14},
+    {key:'vitc', name:'Vitamina C', cycle:0}
+  ]},
+  { block:'🥤 POST', type:'checkbox', items:[
+    {key:'iso', name:'Suero ISO', cycle:0},
+    {key:'glut_post', name:'Glutamina (5g)', cycle:0},
+    {key:'creatina', name:'Creatina', cycleLoad:56, cycleDeload:14},
+    {key:'omega3', name:'Omega 3', cycle:0}
+  ]},
+  { block:'🌙 NOCHE', type:'checkbox', items:[
+    {key:'glut_noc', name:'Glutamina (5g)', cycle:0},
+    {key:'magnesio', name:'Magnesio', cycleLoad:84, cycleDeload:21}
+  ]}
+];
+
+// --- CORE STATE ---
+let historyData = [];
+let currentEntry = null;
+let activeDate = null;
+let activeSups = [];
+
+// CORRECCIÓN: HORARIO LOCAL ESTRICTO
+function getLogicalDate() {
+  const n = new Date();
+  if(n.getHours() < DAY_START_HOUR) {
+    n.setDate(n.getDate()-1);
+  }
+  const y = n.getFullYear();
+  const m = String(n.getMonth() + 1).padStart(2, '0');
+  const d = String(n.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function ls(k,d){try{const v=localStorage.getItem(k);return v!==null?JSON.parse(v):d;}catch(e){return d;}}
+function ss(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){console.warn('Storage error');}}
+
+// SANITIZADOR AGRESIVO: Reconstruye arrays faltantes para evitar Crashes Fatales al cargar días viejos
+function sanitizeEntry(entry) {
+  if(!entry.date) entry.date = getLogicalDate();
+  const dow = new Date(entry.date+'T12:00:00').getDay();
+  const r = RUTINAS[dow];
+  
+  // Reconstruir Matriz Binaria
+  if(!entry.cal || !Array.isArray(entry.cal) || entry.cal.length !== r.e.length) {
+      entry.cal = new Array(r.e.length).fill(false);
+  }
+
+  // Reconstruir Matrices Cuantitativas
+  if(!r.tap) {
+      if(!entry.calReps || !Array.isArray(entry.calReps) || entry.calReps.length !== r.s.length) {
+          entry.calReps = r.s.map(s => new Array(s).fill(0));
+      }
+      if(!entry.calWeight || !Array.isArray(entry.calWeight) || entry.calWeight.length !== r.s.length) {
+          entry.calWeight = r.s.map(s => new Array(s).fill(0));
+      }
+      // Verificación Profunda 2D
+      r.s.forEach((sLength, i) => {
+          if(!entry.calReps[i] || !Array.isArray(entry.calReps[i]) || entry.calReps[i].length !== sLength) {
+              entry.calReps[i] = new Array(sLength).fill(0);
+          }
+          if(!entry.calWeight[i] || !Array.isArray(entry.calWeight[i]) || entry.calWeight[i].length !== sLength) {
+              entry.calWeight[i] = new Array(sLength).fill(0);
+          }
+      });
+  } else {
+      entry.calReps = [];
+      entry.calWeight = [];
+  }
+  
+  // Fallbacks de Primitivas
+  entry.weight = entry.weight || '';
+  entry.sleep = Number(entry.sleep) || 0;
+  entry.meditation = Number(entry.meditation) || 0;
+  entry.reflux = Number(entry.reflux) || 0;
+  entry.videos = Number(entry.videos) || 0;
+  entry.courses = Number(entry.courses) || 0;
+  entry.notes = entry.notes || '';
+  
+  // Fallbacks de Objetos
+  if(!entry.consts) entry.consts = {};
+  entry.consts.banana = Number(entry.consts.banana) || 0;
+  entry.consts.eggs = Number(entry.consts.eggs) || 0;
+  entry.consts.otherfruit = Number(entry.consts.otherfruit) || 0;
+  
+  if(!entry.sup) entry.sup = {};
+  if(!entry.study) entry.study = {python:false, english:false};
+  if(!entry.requiredSups) entry.requiredSups = [];
+  
+  return entry;
+}
+
+// Inicialización de la entrada diaria nueva
+function initEntry(dateStr) {
+  let entry = sanitizeEntry({ date: dateStr, perfect: false });
+  if(historyData.length > 0) {
+    const lastE = historyData[0];
+    entry.videos = lastE.videos || 0;
+    entry.courses = lastE.courses || 0;
+  }
+  return entry;
+}
+
+function checkPerfectDay(entry) {
+  const dow = new Date(entry.date+'T12:00:00').getDay();
+  const r = RUTINAS[dow];
+  let calOk = true;
+  if(!r.tap) {
+    if(!entry.calReps || entry.calReps.length !== r.s.length) calOk = false;
+    else { 
+        try {
+            r.s.forEach((sc, i) => { for(let j=0; j<sc; j++) if(!entry.calReps[i] || entry.calReps[i][j] <= 0) calOk = false; }); 
+        } catch(e) { calOk = false; }
+    }
+  }
+  const supOk = entry.requiredSups ? entry.requiredSups.every(k => entry.sup[k]) : false;
+  const constOk = entry.consts.banana >= 1 && entry.consts.eggs >= 1 && entry.consts.otherfruit >= 1;
+  return calOk && supOk && constOk;
+}
+
+// EL MOTOR DE AUTO-SYNC
+function saveActiveEntry() {
+  if(!currentEntry) return;
+  currentEntry.perfect = checkPerfectDay(currentEntry);
+  const idx = historyData.findIndex(e => e.date === activeDate);
+  if(idx >= 0) historyData[idx] = currentEntry; else historyData.push(currentEntry);
+  historyData.sort((a,b) => b.date.localeCompare(a.date));
+  ss(KEYS.history, historyData);
+  renderHistoryStats();
+}
+
+// --- DRUM UI ENGINE ---
+function createDrum(container, min, max, initialVal, onChange) {
+  const itemH = 30;
+  const values = []; for(let i=min; i<=max; i++) values.push(i);
+  let current = Math.max(0, values.indexOf(initialVal));
+  const inner = document.createElement('div'); inner.className = 'drum-inner';
+  
+  function build() {
+    inner.innerHTML = '<div class="drum-item"></div>';
+    values.forEach((v,i) => {
+      const d = document.createElement('div'); d.className = 'drum-item'+(i===current?' selected':''); d.textContent = v; inner.appendChild(d);
+    });
+    inner.innerHTML += '<div class="drum-item"></div>';
+  }
+  function setPos(idx) {
+    current = Math.max(0, Math.min(values.length-1, idx));
+    inner.style.transform = `translateY(${-(current*itemH)}px)`;
+    Array.from(inner.children).forEach((el,i) => el.classList.toggle('selected', i-1 === current));
+    if(onChange) onChange(values[current]);
+  }
+  
+  build(); container.appendChild(inner);
+  const line = document.createElement('div'); line.className = 'drum-line'; container.appendChild(line);
+  setPos(current);
+  
+  let startY=0, startIdx=0, isDragging=false;
+  const start = e => { startY = e.touches?e.touches[0].clientY:e.clientY; startIdx = current; isDragging = true; };
+  const move = e => { if(!isDragging) return; const y = e.touches?e.touches[0].clientY:e.clientY; setPos(startIdx + Math.round((startY-y)/itemH)); };
+  const end = () => isDragging = false;
+  
+  container.addEventListener('mousedown', start); document.addEventListener('mousemove', move); document.addEventListener('mouseup', end);
+  container.addEventListener('touchstart', start, {passive:false}); container.addEventListener('touchmove', e=>{e.preventDefault(); move(e);}, {passive:false}); container.addEventListener('touchend', end);
+}
+
+// ALGORITMO CICLOS SUPLEMENTOS
+function getCycleInfo(cycleLoad, cycleDeload, key) {
+  if(!cycleLoad) return { active: true, remaining: null };
+  const cycles = ls(KEYS.supCycles, {});
+  const logicalToday = getLogicalDate();
+  
+  if(!cycles[key]) {
+    cycles[key] = { startDate: logicalToday, phase: 'load' };
+    ss(KEYS.supCycles, cycles);
+  }
+  
+  const elapsed = Math.floor((new Date(logicalToday+'T12:00:00') - new Date(cycles[key].startDate+'T12:00:00'))/86400000);
+  let len = cycles[key].phase === 'load' ? cycleLoad : cycleDeload;
+  
+  // Si cruzó el umbral, rotar fase
+  if(elapsed >= len) {
+    cycles[key] = { startDate: logicalToday, phase: cycles[key].phase === 'load' ? 'deload' : 'load' };
+    ss(KEYS.supCycles, cycles);
+    len = cycles[key].phase === 'load' ? cycleLoad : cycleDeload;
+    return { active: cycles[key].phase === 'load', remaining: len }; // Empieza nuevo ciclo completo
+  }
+  
+  return { active: cycles[key].phase === 'load', remaining: len - elapsed };
+}
+
+// --- RENDER DASHBOARD ---
+function renderDashboard() {
+  try {
+    const dow = new Date(activeDate+'T12:00:00').getDay();
+    const DIAS = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+    document.getElementById('header-date').textContent = DIAS[dow] + ' ' + new Date(activeDate+'T12:00:00').toLocaleDateString('es-ES');
+    
+    const alertEl = document.getElementById('header-alert');
+    const btnReturn = document.getElementById('btn-return-today');
+    if(activeDate !== getLogicalDate()) {
+      alertEl.textContent = "ESTÁS EDITANDO EL PASADO"; alertEl.style.display = 'block';
+      btnReturn.style.display = 'block';
+    } else {
+      alertEl.style.display = 'none'; btnReturn.style.display = 'none';
+    }
+
+    // 1. Calistenia
+    const rutina = RUTINAS[dow];
+    document.getElementById('cal-title').textContent = rutina.t;
+    const exCardsEl = document.getElementById('ex-cards');
+    exCardsEl.innerHTML = ''; 
+    
+    rutina.e.forEach((ex, i) => {
+      const card = document.createElement('div'); card.className = 'ex-card';
+      const hdr = document.createElement('div'); hdr.className = 'ex-header';
+      const chk = document.createElement('div'); chk.className = 'ex-check' + (currentEntry.cal[i]?' checked':''); chk.textContent = currentEntry.cal[i]?'✓':'';
+      const name = document.createElement('div'); name.className = 'ex-name'; name.textContent = ex;
+      const vol = document.createElement('div'); vol.className = 'ex-vol';
+      hdr.append(chk, name, vol); card.appendChild(hdr);
+      
+      if(rutina.tap) {
+        hdr.addEventListener('click', () => { currentEntry.cal[i]=!currentEntry.cal[i]; chk.classList.toggle('checked'); chk.textContent=currentEntry.cal[i]?'✓':''; saveActiveEntry(); });
+      } else {
+        const calcVol = () => { 
+            try {
+                const tr = currentEntry.calReps[i].reduce((a,b)=>a+b,0); vol.textContent = tr>0 ? `${tr} reps` : ''; 
+            } catch(e) { vol.textContent = ''; }
+        };
+        calcVol();
+        const body = document.createElement('div'); body.className = 'ex-body';
+        const drumsRow = document.createElement('div'); drumsRow.className = 'drums-row';
+        
+        for(let s=0; s<rutina.s[i]; s++) {
+          const sRow = document.createElement('div'); sRow.className = 'series-config';
+          const lbl = document.createElement('div'); lbl.style.cssText = "font-weight:bold;color:var(--amber-dim);"; lbl.textContent = `S${s+1}`;
+          
+          const repsWrap = document.createElement('div'); repsWrap.className = 'drum-wrap';
+          const repsLbl = document.createElement('div'); repsLbl.className = 'drum-label'; repsLbl.textContent = 'REPS';
+          const repsDrum = document.createElement('div'); repsDrum.className = 'drum';
+          repsWrap.append(repsLbl, repsDrum);
+          createDrum(repsDrum, 0, 60, currentEntry.calReps[i][s], v => { currentEntry.calReps[i][s] = v; calcVol(); saveActiveEntry(); });
+          
+          const wWrap = document.createElement('div'); wWrap.className = 'drum-wrap';
+          const wLbl = document.createElement('div'); wLbl.className = 'drum-label'; wLbl.textContent = 'LASTRE (kg)';
+          const wDrum = document.createElement('div'); wDrum.className = 'drum';
+          wWrap.append(wLbl, wDrum);
+          createDrum(wDrum, 0, 60, currentEntry.calWeight[i][s], v => { currentEntry.calWeight[i][s] = v; saveActiveEntry(); });
+          
+          sRow.append(lbl, repsWrap, wWrap); drumsRow.appendChild(sRow);
+        }
+        body.appendChild(drumsRow); card.appendChild(body);
+        hdr.addEventListener('click', () => {
+          const open = body.classList.toggle('open');
+          if(!open) { 
+              try {
+                  currentEntry.cal[i] = currentEntry.calReps[i].reduce((a,b)=>a+b,0)>0; 
+              } catch(e) { currentEntry.cal[i] = false; }
+              chk.classList.toggle('checked', currentEntry.cal[i]); chk.textContent=currentEntry.cal[i]?'✓':''; saveActiveEntry(); 
+          }
+        });
+      }
+      exCardsEl.appendChild(card);
+    });
+
+    // Peso (Solo se muestra los Lunes)
+    document.getElementById('weight-module').style.display = dow === 1 ? 'block' : 'none';
+    const wInp = document.getElementById('weight-input');
+    wInp.value = currentEntry.weight;
+    wInp.oninput = (e) => { currentEntry.weight = e.target.value; saveActiveEntry(); };
+
+    // Steppers Reutilizables
+    const bindStepper = (idDisplay, idAdd, idSub, min, max, targetObj, key) => {
+      const disp = document.getElementById(idDisplay); disp.textContent = targetObj[key] || 0;
+      document.getElementById(idAdd).onclick = () => { if((targetObj[key]||0)<max) { targetObj[key] = (targetObj[key]||0)+1; disp.textContent=targetObj[key]; saveActiveEntry(); }};
+      document.getElementById(idSub).onclick = () => { if((targetObj[key]||0)>min) { targetObj[key] = (targetObj[key]||0)-1; disp.textContent=targetObj[key]; saveActiveEntry(); }};
+    };
+    
+    // Binding de variables
+    bindStepper('reflux-count', 'btn-add-reflux', 'btn-sub-reflux', 0, 10, currentEntry, 'reflux');
+    bindStepper('sleep-count', 'btn-add-sleep', 'btn-sub-sleep', 0, 10, currentEntry, 'sleep');
+    bindStepper('med-count', 'btn-add-med', 'btn-sub-med', 0, 999, currentEntry, 'meditation');
+    bindStepper('video-count', 'btn-add-video', 'btn-sub-video', 0, 9999, currentEntry, 'videos');
+    bindStepper('course-count', 'btn-add-course', 'btn-sub-course', 0, 9999, currentEntry, 'courses');
+
+    // Suplementos & Constantes (Con temporizador)
+    const supBlocksEl = document.getElementById('sup-blocks');
+    supBlocksEl.innerHTML = '';
+    activeSups = [];
+
+    SUP_PROTOCOL.forEach(block => {
+      const bDiv = document.createElement('div'); bDiv.className = 'sup-block';
+      bDiv.innerHTML = `<div class="sup-block-title">${block.block}</div>`;
+      block.items.forEach(item => {
+        const row = document.createElement('div'); row.className = 'sup-item';
+        if(block.type === 'stepper') {
+          row.innerHTML = `
+            <div class="sup-item-left"><span class="sup-item-name">${item.name}</span></div>
+            <div class="const-stepper">
+              <button class="const-btn sub">−</button>
+              <div class="const-val">${currentEntry.consts[item.key]}</div>
+              <button class="const-btn add">+</button>
+            </div>`;
+          const valEl = row.querySelector('.const-val');
+          row.querySelector('.add').onclick = () => { if(currentEntry.consts[item.key]<item.max){ currentEntry.consts[item.key]++; valEl.textContent=currentEntry.consts[item.key]; saveActiveEntry(); }};
+          row.querySelector('.sub').onclick = () => { if(currentEntry.consts[item.key]>0){ currentEntry.consts[item.key]--; valEl.textContent=currentEntry.consts[item.key]; saveActiveEntry(); }};
+        } else {
+          const cycleData = getCycleInfo(item.cycleLoad, item.cycleDeload, item.key);
+          const active = cycleData.active;
+          if(active) activeSups.push(item.key);
+          
+          const isChecked = currentEntry.sup[item.key] || false;
+          let daysStr = cycleData.remaining !== null ? ` | Faltan ${cycleData.remaining}d` : '';
+          
+          row.innerHTML = `
+            <div class="sup-item-left">
+              <input type="checkbox" ${isChecked?'checked':''} ${!active?'disabled':''}>
+              <div>
+                <div class="sup-item-name" style="${!active?'opacity:0.3;text-decoration:line-through;':''}">${item.name}</div>
+                <div class="sup-item-fn">${active?'FASE ACTIVA':'DESCARGA'}<span style="color:var(--amber);">${daysStr}</span></div>
+              </div>
+            </div>`;
+          row.querySelector('input').onchange = (e) => { currentEntry.sup[item.key] = e.target.checked; saveActiveEntry(); };
+        }
+        bDiv.appendChild(row);
+      });
+      supBlocksEl.appendChild(bDiv);
+    });
+    currentEntry.requiredSups = activeSups; 
+
+    // Estudios (Solo L-V)
+    const studyBlock = document.getElementById('study-block');
+    const studyChecks = document.getElementById('study-checks');
+    studyChecks.innerHTML = '';
+    if(dow !== 0 && dow !== 6) {
+      studyBlock.style.display = 'block';
+      ['Python', 'Inglés'].forEach((name, i) => {
+        const key = i===0?'python':'english';
+        const d = document.createElement('div'); d.className = 'sup-item';
+        d.innerHTML = `<div class="sup-item-left"><input type="checkbox" ${currentEntry.study[key]?'checked':''}> <span class="sup-item-name">${name}</span></div>`;
+        d.querySelector('input').onchange = (e) => { currentEntry.study[key] = e.target.checked; saveActiveEntry(); };
+        studyChecks.appendChild(d);
+      });
+    } else { studyBlock.style.display = 'none'; }
+
+    // Notas
+    const notesEl = document.getElementById('day-notes');
+    notesEl.value = currentEntry.notes;
+    notesEl.oninput = (e) => { currentEntry.notes = e.target.value; saveActiveEntry(); };
+    
+    saveActiveEntry();
+  } catch (error) {
+      console.error("Error crítico renderizando Dashboard:", error);
+      alert("Error reconstruyendo el día. Reinicia la página.");
+  }
+}
+
+// --- TEMPORIZADOR MEDITACIÓN ---
+let medTimerInterval = null;
+const btnMedTimer = document.getElementById('btn-med-timer');
+btnMedTimer.onclick = () => {
+  if(medTimerInterval) { clearInterval(medTimerInterval); medTimerInterval=null; btnMedTimer.textContent='◉ INICIAR 10 MINUTOS'; btnMedTimer.style.background='var(--amber-dark)'; btnMedTimer.style.color='var(--amber)'; return; }
+  let sec = 600; btnMedTimer.style.background='var(--green)'; btnMedTimer.style.color='#000';
+  const tick = () => {
+    const m=Math.floor(sec/60), s=sec%60; btnMedTimer.textContent = `◉ ${m}:${s<10?'0':''}${s} — CANCELAR`;
+    if(sec<=0) { clearInterval(medTimerInterval); medTimerInterval=null; btnMedTimer.textContent='◉ INICIAR 10 MINUTOS'; btnMedTimer.style.background='var(--amber-dark)'; btnMedTimer.style.color='var(--amber)'; currentEntry.meditation += 10; document.getElementById('med-count').textContent=currentEntry.meditation; saveActiveEntry(); alert('Meditación completada y guardada.'); return; }
+    sec--;
+  };
+  tick(); medTimerInterval = setInterval(tick, 1000);
+};
+
+// --- RENDER HISTORIAL (ANALYTICS ENGINE & MONTHLY TABS) ---
+function renderHistoryStats() {
+  const h = historyData;
+  let currentStreak = 0, maxStreak = 0;
+  let totalReps = 0, maxReps = 0, workoutDays = 0;
+  let totalSleep = 0, recentRefluxSum = 0, recentRefluxDays = 0;
+  
+  // Streaks recalculation (oldest to newest)
+  [...h].reverse().forEach(e => { if(e.perfect) { currentStreak++; maxStreak = Math.max(maxStreak, currentStreak); } else currentStreak = 0; });
+  const actStreak = h.length && h[0].perfect ? currentStreak : 0; 
+  
+  // Loop (newest to oldest)
+  h.forEach((e, i) => {
+    totalSleep += (e.sleep || 0);
+    let dayReps = 0;
+    if(e.calReps && e.calReps.length) { 
+        try {
+            e.calReps.forEach(arr => { if(Array.isArray(arr)) dayReps += arr.reduce((a,b)=>a+b,0); }); 
+        } catch(err) {}
+    }
+    if(dayReps > 0) { totalReps += dayReps; workoutDays++; maxReps = Math.max(maxReps, dayReps); }
+    if(i < 7) { recentRefluxSum += (e.reflux || 0); recentRefluxDays++; }
+  });
+
+  const calcCommit = e => {
+    let s=0; const dow = new Date(e.date+'T12:00:00').getDay();
+    s += 25 * (e.calReps ? 1 : (RUTINAS[dow].tap ? 1 : 0));
+    s += 25 * (Math.min(e.sleep||0, 8)/8);
+    s += 15 * (e.requiredSups&&e.requiredSups.length ? e.requiredSups.filter(k=>e.sup[k]).length/e.requiredSups.length : 1);
+    s += 15 * ((e.meditation||0)>0 ? 1 : 0);
+    s += (dow!==0&&dow!==6) ? (e.study?.python?10:0)+(e.study?.english?10:0) : 20;
+    return Math.min(100, s);
+  };
+  
+  const avgC = h.length ? Math.round(h.reduce((a,e)=>a+calcCommit(e),0)/h.length) : 0;
+  const avgReps = workoutDays ? Math.round(totalReps / workoutDays) : 0;
+  const avgSleep = h.length ? (totalSleep / h.length).toFixed(1) : 0;
+  const avgReflux = recentRefluxDays ? (recentRefluxSum / recentRefluxDays).toFixed(1) : 0;
+  
+  let weights = h.filter(e => e.weight !== '' && e.weight !== undefined && e.weight !== null);
+  let wEvo = "-";
+  if(weights.length >= 2) wEvo = `${weights[weights.length-1].weight} ➔ ${weights[0].weight}`;
+  else if (weights.length === 1) wEvo = `${weights[0].weight}kg`;
+  
+  document.getElementById('stats-grid').innerHTML = `
+    <div class="stat-box highlight"><div class="stat-num">${actStreak}</div><div class="stat-label">RACHA ACTIVA</div></div>
+    <div class="stat-box highlight"><div class="stat-num">${maxStreak}</div><div class="stat-label">RÉCORD PERFECTO</div></div>
+    <div class="stat-box"><div class="stat-num">${avgC}%</div><div class="stat-label">COMPROMISO</div></div>
+    <div class="stat-box"><div class="stat-num">${h.length}</div><div class="stat-label">DÍAS REGISTRADOS</div></div>
+    <div class="stat-box"><div class="stat-num">${avgReps}</div><div class="stat-label">REPS (MEDIA)</div></div>
+    <div class="stat-box"><div class="stat-num">${maxReps}</div><div class="stat-label">REPS (RÉCORD)</div></div>
+    <div class="stat-box"><div class="stat-num">${avgSleep}</div><div class="stat-label">SUEÑO (MEDIA)</div></div>
+    <div class="stat-box"><div class="stat-num">${avgReflux}</div><div class="stat-label">REFLUJO (7d MEDIA)</div></div>
+    <div class="stat-box" style="grid-column: 1 / -1;"><div class="stat-num text-center">${wEvo}</div><div class="stat-label text-center">EVOLUCIÓN PESO CORPORAL</div></div>
+  `;
+
+  // --- AGRUPACIÓN MENSUAL ---
+  const listEl = document.getElementById('hist-list');
+  listEl.innerHTML = '';
+  
+  const grouped = {};
+  h.forEach(e => {
+    const monthKey = e.date.substring(0, 7); // Formato "YYYY-MM"
+    if(!grouped[monthKey]) grouped[monthKey] = [];
+    grouped[monthKey].push(e);
+  });
+
+  const monthNames = ["ENERO", "FEBRERO", "MARZO", "ABRIL", "MAYO", "JUNIO", "JULIO", "AGOSTO", "SEPTIEMBRE", "OCTUBRE", "NOVIEMBRE", "DICIEMBRE"];
+  const currentMonthKey = getLogicalDate().substring(0, 7);
+
+  Object.keys(grouped).sort().reverse().forEach(monthKey => {
+    const [y, m] = monthKey.split('-');
+    const monthName = `${monthNames[parseInt(m)-1]} ${y}`;
+    const isCurrentMonth = monthKey === currentMonthKey;
+    
+    const groupDiv = document.createElement('div');
+    const header = document.createElement('div');
+    header.className = 'month-header';
+    header.innerHTML = `${monthName} <span style="font-size:0.7rem; color:var(--amber-dim)">▼</span>`;
+    
+    const content = document.createElement('div');
+    content.className = `month-content ${isCurrentMonth ? '' : 'hidden'}`;
+    
+    header.onclick = () => content.classList.toggle('hidden');
+    
+    grouped[monthKey].forEach(e => {
+      const row = document.createElement('div');
+      row.className = `hist-row ${e.perfect ? 'perfect' : ''}`;
+      row.innerHTML = `
+        <div>
+          <div class="hist-date">${e.date}</div>
+          ${e.perfect ? '<div class="hist-perf">★ DÍA PERFECTO</div>' : ''}
+        </div>
+        <button class="hist-edit-btn">EDITAR</button>
+      `;
+      row.querySelector('button').onclick = () => {
+        activeDate = e.date;
+        currentEntry = sanitizeEntry(e); // Sanitize super estricto aquí
+        renderDashboard();
+        document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
+        document.querySelector('[data-tab="dashboard"]').classList.add('active');
+        document.getElementById('panel-dashboard').classList.add('active');
+        window.scrollTo(0,0);
+      };
+      content.appendChild(row);
+    });
+    
+    groupDiv.appendChild(header);
+    groupDiv.appendChild(content);
+    listEl.appendChild(groupDiv);
+  });
+}
+
+// --- BOOTSTRAP ---
+function bootstrap() {
+  historyData = ls(KEYS.history, []);
+  activeDate = getLogicalDate();
+  currentEntry = historyData.find(e => e.date === activeDate);
+  if(!currentEntry) {
+    currentEntry = initEntry(activeDate);
+  } else {
+    currentEntry = sanitizeEntry(currentEntry);
+  }
+  renderDashboard();
+  renderHistoryStats();
+}
+
+// Nav
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', () => {
+  document.querySelectorAll('.tab, .panel').forEach(el => el.classList.remove('active'));
+  t.classList.add('active'); document.getElementById('panel-'+t.dataset.tab).classList.add('active');
+  if(t.dataset.tab === 'history') renderHistoryStats();
+}));
+
+// Volver a Hoy
+document.getElementById('btn-return-today').onclick = () => {
+  activeDate = getLogicalDate();
+  currentEntry = historyData.find(e => e.date === activeDate);
+  if(!currentEntry) currentEntry = initEntry(activeDate);
+  else currentEntry = sanitizeEntry(currentEntry);
+  renderDashboard();
+};
+
+// JSON Export/Import
+document.getElementById('btn-export').onclick = () => {
+  const blob = new Blob([JSON.stringify(historyData, null, 2)], {type:'application/json'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `bionucleo_sync_${getLogicalDate()}.json`; a.click();
+};
+
+document.getElementById('btn-import').onclick = () => document.getElementById('file-import').click();
+document.getElementById('file-import').onchange = function(e) {
+  const file = e.target.files[0]; if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if(!Array.isArray(imported)) throw new Error();
+      imported.forEach(entry => {
+        if(!entry.date) return;
+        const sanitized = sanitizeEntry(entry);
+        const idx = historyData.findIndex(ex => ex.date === sanitized.date);
+        if(idx >= 0) historyData[idx] = sanitized; else historyData.push(sanitized);
+      });
+      historyData.sort((a,b) => b.date.localeCompare(a.date));
+      ss(KEYS.history, historyData);
+      bootstrap();
+      alert(`Importación exitosa. Días totales: ${historyData.length}`);
+    } catch(err) { alert('Error crítico: JSON corrupto o inválido.'); }
+  };
+  reader.readAsText(file); this.value = '';
+};
+
+// INICIAR APP
+bootstrap();
+</script>
+</body>
+</html>
