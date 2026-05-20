@@ -696,6 +696,20 @@ function renderHistoryStats() {
   });
 }
 
+// --- PROTOCOLO DE COMPRESIÓN DE TELEMETRÍA (AHORRO EXCEPCIONAL DE TOKENS) ---
+function getCompressedHistory() {
+  return historyData.slice(0, 14).map(e => ({
+    date: e.date,
+    weight: e.weight || undefined,
+    sleep: e.sleep || 0,
+    meditation: e.meditation || 0,
+    reflux: e.reflux || 0,
+    perfect: e.perfect ? 1 : 0,
+    commit: calcCommit(e),
+    notes: e.notes ? e.notes.substring(0, 100) : undefined // Recorta notas largas para ahorrar ancho de banda
+  }));
+}
+
 // --- ENGINE MOTOR: BIOCOACH CLIENT & FUNCTION CALLING ---
 function appendChatMessage(role, text) {
   const log = document.getElementById('chat-messages-log'); const mDiv = document.createElement('div');
@@ -709,13 +723,19 @@ async function sendToBiocoach() {
   appendChatMessage('user', text); inputEl.value = ''; btn.disabled = true; inputEl.disabled = true;
   chatMessages.push({ role: "user", parts: [{ text: text }] });
 
+  // APLICACIÓN DEL PROTOCOLO DE TOKENS: Ventana Deslizable (Sliding Window)
+  // Mantiene únicamente las últimas 3 preguntas y 3 respuestas para evitar desbordar la cuota
+  const slidingWindowMessages = chatMessages.slice(-6);
+
   try {
     const response = await fetch(WORKER_URL, {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: chatMessages, app_history: historyData.slice(0, 14) })
+      body: JSON.stringify({ 
+        messages: slidingWindowMessages, 
+        app_history: getCompressedHistory() // Envía telemetría minificada
+      })
     });
     
-    // Si la respuesta de red falla, extraemos el error exacto
     if(!response.ok) {
       const errData = await response.json().catch(() => ({}));
       throw new Error(errData.error?.message || errData.error || `HTTP Status ${response.status}`);
@@ -729,9 +749,8 @@ async function sendToBiocoach() {
     const candidate = data.candidates?.[0]; 
     const content = candidate?.content;
     if (content) {
-      chatMessages.push(content); // Guardar respuesta del modelo en memoria corta
+      chatMessages.push(content); 
       
-      // Iterar por todas las partes devueltas
       if (content.parts) {
         for (const part of content.parts) {
           if (part.text) {
@@ -740,7 +759,6 @@ async function sendToBiocoach() {
           if (part.functionCall) {
             const resultText = executeBiocoachAction(part.functionCall);
             
-            // Sincronizar el historial del chat agregando el rol 'tool' con el resultado de la ejecución
             chatMessages.push({
               role: "tool",
               parts: [{
