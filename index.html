@@ -18,7 +18,7 @@ body{background:var(--bg);color:var(--amber);font-family:'Share Tech Mono',monos
 
 /* HEADER & TABS */
 header{border-bottom:2px solid var(--amber-dim);padding-bottom:1rem;margin-bottom:1.25rem;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:.5rem;}
-header h1{font-family:'Rajdhani',sans-serif;font-size:1.8rem;letter-spacing:-1px;color:var(--amber);font-weight:700;}
+header h1{font-family:'Rajdhani',sans-serif;font-size:1.8rem;letter-spacing:-1px;color:var(--purple);font-weight:700;}
 header p{font-size:.65rem;color:var(--amber-dim);margin-top:.15rem;}
 .status{font-size:.7rem;border:1px solid var(--amber-dim);padding:.4rem;background:var(--surface2);white-space:nowrap;display:flex;flex-direction:column;align-items:flex-end;}
 .pulse{animation:pulse 2s infinite;}
@@ -397,7 +397,7 @@ function calcCommit(e) {
   s += 15 * (e.requiredSups&&e.requiredSups.length ? e.requiredSups.filter(k=>e.sup[k]).length/e.requiredSups.length : 1);
   s += 15 * ((e.meditation||0)>0 ? 1 : 0);
   s += (dow!==0&&dow!==6) ? (e.study?.python?10:0)+(e.study?.english?10:0) : 20;
-  return Math.min(100, s);
+  return Math.round(Math.min(100, s));
 }
 
 function saveActiveEntry() {
@@ -724,11 +724,11 @@ function renderHistoryStats() {
     <div class="stat-box lila"><div class="stat-num ${getThresholdClass(actStreak, 3, 5)}">${actStreak}</div><div class="stat-label">RACHA ACTIVA</div></div>
     <div class="stat-box lila"><div class="stat-num ${getThresholdClass(maxStreak, 3, 5)}">${maxStreak}</div><div class="stat-label">RÉCORD PERFECTO</div></div>
     <div class="stat-box lila" onclick="toggleGraph('g-commit')"><div class="stat-num ${getThresholdClass(avgC, 50, 80)}">${avgC}%</div><div class="stat-label">COMPROMISO MEDIA</div><div id="g-commit" class="stat-graph">${generateSVG(arrCommit, '#a855f7')}</div></div>
-    <div class="stat-box"><div class="stat-num val-amber">${h.length}</div><div class="stat-label">DÍAS REGISTRO</div></div>
+    <div class="stat-box azul" onclick="toggleGraph('g-sleep')"><div class="stat-num ${getThresholdClass(avgSleep, 6.5, 7.5)}">${avgSleep}</div><div class="stat-label">SUEÑO (MEDIA)</div><div id="g-sleep" class="stat-graph">${generateSVG(arrSleep, '#3b82f6')}</div></div>
     
     <div class="stat-box azul" onclick="toggleGraph('g-reps')"><div class="stat-num ${getThresholdClass(avgReps, 40, 80)}">${avgReps}</div><div class="stat-label">REPS (MEDIA)</div><div id="g-reps" class="stat-graph">${generateSVG(arrReps, '#3b82f6')}</div></div>
     <div class="stat-box azul"><div class="stat-num val-blue" style="color:var(--blue);">${maxReps}</div><div class="stat-label">REPS (RÉCORD)</div></div>
-    <div class="stat-box azul" onclick="toggleGraph('g-sleep')"><div class="stat-num ${getThresholdClass(avgSleep, 6.5, 7.5)}">${avgSleep}</div><div class="stat-label">SUEÑO (MEDIA)</div><div id="g-sleep" class="stat-graph">${generateSVG(arrSleep, '#3b82f6')}</div></div>
+    <div class="stat-box"><div class="stat-num val-amber">${h.length}</div><div class="stat-label">DÍAS REGISTRO</div></div>
     <div class="stat-box" onclick="toggleGraph('g-reflux')"><div class="stat-num ${getThresholdClass(avgReflux, 4, 1, true)}">${avgReflux}</div><div class="stat-label">REFLUJO (7d)</div><div id="g-reflux" class="stat-graph">${generateSVG(arrReflux, '#f59e0b')}</div></div>
   `;
 
