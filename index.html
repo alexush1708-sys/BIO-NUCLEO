@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-<title>[BIO_NUCLEO] // SALUD Y PRODUCCIÓN</title>
+<title>[BIO_NUCLEO] // LOCAL LLM CORE</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
 
@@ -96,16 +96,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 .stat-num{font-family:'Rajdhani',sans-serif;font-size:1.7rem;font-weight:700;line-height:1;}
 .stat-label{font-size:.55rem;color:var(--amber-dim);margin-top:.2rem;line-height:1.2;text-transform:uppercase;font-weight:bold;letter-spacing:0.5px;}
 
-/* CONTENEDOR DE GRÁFICA DETALLADA */
-.stat-graph{
-  width:100%; 
-  height:75px; 
-  margin-top:8px; 
-  display:none; 
-  background:#050505; 
-  border:1px dashed #222;
-  padding:4px;
-}
+.stat-graph{width:100%; height:75px; margin-top:8px; display:none; background:#050505; border:1px dashed #222; padding:4px;}
 .stat-graph.show{display:block;}
 
 .val-green{color:var(--green);}
@@ -125,7 +116,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 .hist-perf{font-size:.65rem;color:var(--green);margin-top:.2rem;}
 .hist-edit-btn{background:var(--surface2);color:var(--amber);border:1px solid var(--amber-dim);padding:.3rem .6rem;font-family:'Share Tech Mono';font-size:.7rem;cursor:pointer;}
 
-/* BIOCOACH CHAT INTERFACE */
+/* BIOCOACH CHAT INTERFACE - LOCAL OLLAMA VERSION */
 .chat-container { 
   display: flex; 
   flex-direction: column; 
@@ -139,8 +130,8 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 .chat-messages { flex: 1; overflow-y: auto; margin-bottom: 0.8rem; display: flex; flex-direction: column; gap: .8rem; padding-right: .5rem; }
 .chat-msg { max-width: 85%; padding: .7rem; border: 1px solid var(--amber-dark); background: var(--surface2); font-size: .85rem; line-height: 1.4; word-wrap: break-word; white-space: pre-line; }
 .chat-msg.user { align-self: flex-end; border-color: var(--purple); background: rgba(168, 85, 247, 0.1); color: #fff; }
-.chat-msg.model { align-self: flex-start; border-color: var(--amber-dim); color: var(--amber); }
-.chat-msg.system-action { align-self: center; border-color: var(--green); background: rgba(34, 197, 94, 0.05); color: var(--green); font-size: .7rem; letter-spacing: 1px; text-transform: uppercase; text-align: center; width: 100%; max-width: 100%; }
+.chat-msg.model { align-self: flex-start; border-color: var(--purple); color: #e9d5ff; }
+.chat-msg.system-action { align-self: center; border-color: var(--blue); background: rgba(59, 130, 246, 0.05); color: var(--blue); font-size: .7rem; letter-spacing: 1px; text-transform: uppercase; text-align: center; width: 100%; }
 .chat-input-row { display: flex; gap: .5rem; shrink-0; }
 .chat-input-row input { 
   flex: 1; 
@@ -173,10 +164,10 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 <header>
   <div>
     <h1>[BIO_NUCLEO]</h1>
-    <p>SISTEMA DE SALUD, NUTRICIÓN Y PRODUCCIÓN</p>
+    <p>LOCAL IA MATRIX // MAC CORE UNLOCKED</p>
   </div>
   <div class="status">
-    <div><span id="header-date">—</span> &nbsp;|&nbsp; <span class="pulse" style="color:var(--green)">AUTO-SYNC</span></div>
+    <div><span id="header-date">—</span> &nbsp;|&nbsp; <span class="pulse" style="color:var(--purple)">OLLAMA LIVE</span></div>
     <div id="header-alert" style="color:var(--red);font-weight:bold;margin-top:.2rem;display:none;"></div>
   </div>
 </header>
@@ -184,10 +175,9 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 <div class="tabs">
   <button class="tab active" data-tab="dashboard">▣ DASHBOARD</button>
   <button class="tab" data-tab="history">◈ HISTORIAL</button>
-  <button class="tab" data-tab="biocoach">💬 BIOCOACH</button>
+  <button class="tab" data-tab="biocoach">💬 LOCAL BIOCOACH</button>
 </div>
 
-<!-- PANEL DASHBOARD -->
 <div class="panel active" id="panel-dashboard">
 <button class="btn btn-return" id="btn-return-today">← VOLVER A HOY</button>
 <div class="grid">
@@ -271,7 +261,6 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 </div>
 </div>
 
-<!-- PANEL HISTORIAL -->
 <div class="panel" id="panel-history">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
     <h2>ARCHIVO HISTÓRICO</h2>
@@ -287,15 +276,14 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
   <div class="hist-list" id="hist-list"></div>
 </div>
 
-<!-- PANEL BIOCOACH AI -->
 <div class="panel" id="panel-biocoach">
   <div class="chat-container">
     <div class="chat-messages" id="chat-messages-log">
-      <div class="chat-msg model">SISTEMA BIOCOACH EN LÍNEA. Esperando directrices de rendimiento térmico y biomecánico. ¿Cuál es el plan de optimización para hoy?</div>
+      <div class="chat-msg model">SISTEMA BIOCOACH LOCAL (OLLAMA ENGINE). Consultor biomecánico y nutricional sin restricciones activado. Historial inyectado. ¿Cuáles son tus dudas de rendimiento para hoy?</div>
     </div>
     <div class="chat-input-row">
-      <input type="text" id="chat-input-field" placeholder="Escribe un mensaje o da una orden de registro..." onkeydown="if(event.key==='Enter') sendToBiocoach()"/>
-      <button id="chat-send-btn" onclick="sendToBiocoach()">Enviar</button>
+      <input type="text" id="chat-input-field" placeholder="Pregunta sobre nutrición, entrenamiento o tu progreso..." onkeydown="if(event.key==='Enter') sendToBiocoachLocal()"/>
+      <button id="chat-send-btn" onclick="sendToBiocoachLocal()">Enviar</button>
     </div>
   </div>
 </div>
@@ -304,7 +292,8 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 // --- CONFIG & CONSTANTS ---
 const DAY_START_HOUR = 4; 
 const KEYS = { history: 'v11_history', supCycles: 'v11_supCycles' };
-const WORKER_URL = "https://asistentebiocach.alexush1708.workers.dev/";
+const OLLAMA_URL = "http://localhost:11434/api/chat";
+const OLLAMA_MODEL = "llama3"; // Puedes cambiarlo por "mistral", "gemma", "phi3" etc.
 
 const RUTINAS = {
   1:{t:'LUNES: EMPUJE + CORE',      e:['Fondos','Flexiones','Flexiones decl.','Extensión tríceps','Plancha'], s:[4,4,4,4,3], sec:[4]},
@@ -346,7 +335,7 @@ let historyData = [];
 let currentEntry = null;
 let activeDate = null;
 let activeSups = [];
-let chatMessages = []; 
+let localChatHistory = []; // Memoria conversacional limpia para Ollama
 
 function getLogicalDate() {
   const n = new Date();
@@ -613,7 +602,7 @@ function renderDashboard() {
       ['Python', 'Inglés'].forEach((name, i) => {
         const key = i===0?'python':'english'; const d = document.createElement('div'); d.className = 'sup-item';
         d.innerHTML = `<div class="sup-item-left"><input type="checkbox" ${currentEntry.study[key]?'checked':''}> <span class="sup-item-name">${name}</span></div>`;
-        d.querySelector('input').onchange = (e) => { currentEntry.study[key] = e.target.checked; saveActiveEntry(); }; studyChecks.appendChild(d);
+        d.querySelector('input').onchange = (e) => { currentEntry.study[key] = e.target.checked; studyChecks.appendChild(d); };
       });
     } else { studyBlock.style.display = 'none'; }
 
@@ -626,21 +615,11 @@ function renderDashboard() {
 // --- CURVED AREA/LINE HIGH-PERFORMANCE SVG ENGINE ---
 function generateSVG(dataArr, colorStr) {
   if(!dataArr || dataArr.length < 1) return '';
-  
-  // Rellenar valores si el array es muy corto para evitar errores de renderizado
   if(dataArr.length === 1) dataArr = [dataArr[0], dataArr[0]];
-
-  const width = 500;
-  const height = 100;
-  
-  const maxVal = Math.max(...dataArr);
-  const minVal = Math.min(...dataArr);
+  const width = 500, height = 100;
+  const maxVal = Math.max(...dataArr); const minVal = Math.min(...dataArr);
   const range = (maxVal - minVal) === 0 ? 1 : (maxVal - minVal);
-  
-  // Añadir márgenes dinámicos superiores e inferiores dentro de la caja de la gráfica
-  const padTop = 15;
-  const padBottom = 15;
-  const adjHeight = height - padTop - padBottom;
+  const padTop = 15, padBottom = 15, adjHeight = height - padTop - padBottom;
 
   const points = dataArr.map((val, i) => {
     const x = (i / (dataArr.length - 1)) * width;
@@ -648,22 +627,15 @@ function generateSVG(dataArr, colorStr) {
     return {x, y};
   });
 
-  // Generar el path curvo suave usando interpolación bezier suavizada
   let pathD = `M ${points[0].x} ${points[0].y}`;
   for (let i = 0; i < points.length - 1; i++) {
-    const p0 = points[i];
-    const p1 = points[i + 1];
-    const cpX1 = p0.x + (p1.x - p0.x) / 3;
-    const cpY1 = p0.y;
-    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
-    const cpY2 = p1.y;
+    const p0 = points[i], p1 = points[i + 1];
+    const cpX1 = p0.x + (p1.x - p0.x) / 3, cpY1 = p0.y;
+    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3, cpY2 = p1.y;
     pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
   }
-
-  // Crear el cierre inferior de la forma para generar el relleno con degradado de área
   const areaD = `${pathD} L ${points[points.length-1].x} ${height} L ${points[0].x} ${height} Z`;
 
-  // Retornar estructura vectorial pura con grid industrial de fondo
   return `
     <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; display:block;" preserveAspectRatio="none">
       <defs>
@@ -672,16 +644,11 @@ function generateSVG(dataArr, colorStr) {
           <stop offset="100%" stop-color="${colorStr}" stop-opacity="0.0"/>
         </linearGradient>
       </defs>
-      <!-- Rejilla Horizontales de Referencia -->
       <line x1="0" y1="${height*0.25}" x2="${width}" y2="${height*0.25}" stroke="#151515" stroke-width="1" stroke-dasharray="2,4"/>
       <line x1="0" y1="${height*0.5}" x2="${width}" y2="${height*0.5}" stroke="#151515" stroke-width="1" stroke-dasharray="2,4"/>
       <line x1="0" y1="${height*0.75}" x2="${width}" y2="${height*0.75}" stroke="#151515" stroke-width="1" stroke-dasharray="2,4"/>
-      
-      <!-- Trayectoria del Área y Línea de Evolución -->
       <path d="${areaD}" fill="url(#grad-${colorStr.replace('#','')})"/>
       <path d="${pathD}" fill="none" stroke="${colorStr}" stroke-width="2.5" stroke-linecap="round"/>
-      
-      <!-- Nodos de Datos Terminales -->
       ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2" fill="#000" stroke="${colorStr}" stroke-width="1.5"/>`).join('')}
     </svg>
   `;
@@ -715,34 +682,21 @@ function renderHistoryStats() {
     if(dayReps > 0) { totalReps += dayReps; workoutDays++; maxReps = Math.max(maxReps, dayReps); }
     if(i < 7) { recentRefluxSum += (e.reflux || 0); recentRefluxDays++; }
     
-    // Extracción de variables de masa ponderada
     if(e.weight && !isNaN(parseFloat(e.weight))) {
-      const w = parseFloat(e.weight);
-      totalWeight += w;
-      weightDays++;
+      const w = parseFloat(e.weight); totalWeight += w; weightDays++;
       if(lastValidWeight === '—') lastValidWeight = w.toFixed(1) + ' kg';
     }
   });
 
   limit14.forEach(e => {
-      arrCommit.push(calcCommit(e)); 
-      arrSleep.push(e.sleep || 0); 
-      arrReflux.push(e.reflux || 0);
-      
-      let dr = 0; 
-      if(e.calReps) e.calReps.forEach(arr => { if(Array.isArray(arr)) dr += arr.reduce((a,b)=>a+b,0); }); 
-      arrReps.push(dr);
+      arrCommit.push(calcCommit(e)); arrSleep.push(e.sleep || 0); arrReflux.push(e.reflux || 0);
+      let dr = 0; if(e.calReps) e.calReps.forEach(arr => { if(Array.isArray(arr)) dr += arr.reduce((a,b)=>a+b,0); }); arrReps.push(dr);
 
-      if(e.weight && !isNaN(parseFloat(e.weight))) {
-        arrWeight.push(parseFloat(e.weight));
-      } else if(arrWeight.length > 0) {
-        arrWeight.push(arrWeight[arrWeight.length - 1]); // Repetir último peso válido para continuidad del vector
-      } else {
-        arrWeight.push(0);
-      }
+      if(e.weight && !isNaN(parseFloat(e.weight))) { arrWeight.push(parseFloat(e.weight)); } 
+      else if(arrWeight.length > 0) { arrWeight.push(arrWeight[arrWeight.length - 1]); } 
+      else { arrWeight.push(0); }
   });
 
-  // Limpieza inicial si el vector de peso arranca en cero absoluto
   const firstValidWeight = arrWeight.find(w => w > 0) || 75;
   for(let k=0; k<arrWeight.length; k++) { if(arrWeight[k] === 0) arrWeight[k] = firstValidWeight; }
 
@@ -750,18 +704,14 @@ function renderHistoryStats() {
   const avgReps = workoutDays ? Math.round(totalReps / workoutDays) : 0;
   const avgSleep = h.length ? (totalSleep / h.length).toFixed(1) : 0;
   const avgReflux = recentRefluxDays ? (recentRefluxSum / recentRefluxDays).toFixed(1) : 0;
-  const avgWeight = weightDays ? (totalWeight / weightDays).toFixed(1) : '—';
   
   document.getElementById('stats-grid').innerHTML = `
     <div class="stat-box lila"><div class="stat-num ${getThresholdClass(actStreak, 3, 5)}">${actStreak}</div><div class="stat-label">RACHA ACTIVA</div></div>
     <div class="stat-box lila"><div class="stat-num ${getThresholdClass(maxStreak, 3, 5)}">${maxStreak}</div><div class="stat-label">RÉCORD PERFECTO</div></div>
-    
     <div class="stat-box lila" onclick="toggleGraph('g-commit')"><div class="stat-num ${getThresholdClass(avgC, 50, 80)}">${avgC}%</div><div class="stat-label">COMPROMISO (Ø)</div><div id="g-commit" class="stat-graph">${generateSVG(arrCommit, '#a855f7')}</div></div>
     <div class="stat-box azul" onclick="toggleGraph('g-sleep')"><div class="stat-num ${getThresholdClass(avgSleep, 6.5, 7.5)}">${avgSleep}h</div><div class="stat-label">SUEÑO (Ø)</div><div id="g-sleep" class="stat-graph">${generateSVG(arrSleep, '#3b82f6')}</div></div>
-    
     <div class="stat-box verde" onclick="toggleGraph('g-weight')"><div class="stat-num val-green">${lastValidWeight}</div><div class="stat-label">PESO ACTUAL</div><div id="g-weight" class="stat-graph">${generateSVG(arrWeight, '#22c55e')}</div></div>
     <div class="stat-box azul" onclick="toggleGraph('g-reps')"><div class="stat-num ${getThresholdClass(avgReps, 40, 80)}">${avgReps}</div><div class="stat-label">REPS (Ø ENTRENAMIENTO)</div><div id="g-reps" class="stat-graph">${generateSVG(arrReps, '#3b82f6')}</div></div>
-    
     <div class="stat-box azul"><div class="stat-num val-blue">${maxReps}</div><div class="stat-label">REPS (RÉCORD MASTER)</div></div>
     <div class="stat-box" onclick="toggleGraph('g-reflux')"><div class="stat-num ${getThresholdClass(avgReflux, 4, 1, true)}">${avgReflux}</div><div class="stat-label">REFLUJO (7d Ø)</div><div id="g-reflux" class="stat-graph">${generateSVG(arrReflux, '#f59e0b')}</div></div>
   `;
@@ -801,105 +751,75 @@ function renderHistoryStats() {
   });
 }
 
-// --- PROTOCOLO DE COMPRESIÓN DE TELEMETRÍA (AHORRO EXCEPCIONAL DE TOKENS) ---
-function getCompressedHistory() {
-  return historyData.slice(0, 14).map(e => ({
-    date: e.date,
-    weight: e.weight || undefined,
-    sleep: e.sleep || 0,
-    meditation: e.meditation || 0,
-    reflux: e.reflux || 0,
-    perfect: e.perfect ? 1 : 0,
-    commit: calcCommit(e),
-    notes: e.notes ? e.notes.substring(0, 100) : undefined 
+// --- HISTORIAL COMPLETO SIN FILTROS (MÁXIMO ANCHO DE BANDA LOCAL) ---
+function getFullHistoryContext() {
+  return historyData.slice(0, 20).map(e => ({
+    fecha: e.date,
+    peso: e.weight || 'no_reg',
+    sueno_horas: e.sleep,
+    meditacion_min: e.meditation,
+    reflux_SNC: e.reflux,
+    compromiso_index: calcCommit(e),
+    notas_operativas: e.notes
   }));
 }
 
-// --- ENGINE MOTOR: BIOCOACH CLIENT & FUNCTION CALLING ---
+// --- ENGINE MOTOR: LOCAL OLLAMA CLIENT CORE (NO ACTIONS, DEEP CHAT) ---
 function appendChatMessage(role, text) {
   const log = document.getElementById('chat-messages-log'); const mDiv = document.createElement('div');
   mDiv.className = `chat-msg ${role}`; mDiv.textContent = text; log.appendChild(mDiv); log.scrollTop = log.scrollHeight;
 }
 
-async function sendToBiocoach() {
+async function sendToBiocoachLocal() {
   const inputEl = document.getElementById('chat-input-field'); const btn = document.getElementById('chat-send-btn');
   const text = inputEl.value.trim(); if(!text) return;
   
   appendChatMessage('user', text); inputEl.value = ''; btn.disabled = true; inputEl.disabled = true;
-  chatMessages.push({ role: "user", parts: [{ text: text }] });
+  
+  // Guardamos en memoria conversacional interna
+  localChatHistory.push({ role: "user", content: text });
 
-  const slidingWindowMessages = chatMessages.slice(-6);
+  // Inyectamos el System Prompt del Biocoach estructurado para Ollama
+  const systemPrompt = `You are the Personal Bio-Coach, an elite expert in physiological and neurodynamic optimization. You operate by combining the mathematical rigor of a biomechanics researcher with the energy, motivation, and conviction of a high-performance coach. You are a passionate scientific mentor.
+  Your purpose is to inspire and push the user toward their maximum potential, translating their body telemetry into precise challenges and analytical victories.
+  
+  CRITICAL: Actúas como asesor de nutrición, calistenia y salud. Responde con lenguaje enérgico, competitivo y científico. No tienes funciones para cambiar variables, tu labor es puramente dar directrices, resolver dudas y encontrar correlaciones biológicas.
+  
+  Aquí tienes la base de datos completa de los últimos registros históricos del usuario para basar tus conclusiones:
+  ${JSON.stringify(getFullHistoryContext())}`;
+
+  // Formateamos el payload para el endpoint de Ollama (/api/chat)
+  const fullPayloadMessages = [
+    { role: "system", content: systemPrompt },
+    ...localChatHistory
+  ];
 
   try {
-    const response = await fetch(WORKER_URL, {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        messages: slidingWindowMessages, 
-        app_history: getCompressedHistory() 
+    const response = await fetch(OLLAMA_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model: OLLAMA_MODEL,
+        messages: fullPayloadMessages,
+        stream: false // Desactivamos stream para recibir el bloque limpio y veloz
       })
     });
     
-    if(!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error?.message || errData.error || `HTTP Status ${response.status}`);
-    }
+    if(!response.ok) throw new Error(`Ollama status: ${response.status}. Verifica que Ollama esté corriendo y CORS configurado.`);
 
-    const data = await response.json(); 
-    if (data.error) {
-      throw new Error(data.error.message || JSON.stringify(data.error));
+    const data = await response.json();
+    const reply = data.message?.content;
+    
+    if (reply) {
+      appendChatMessage('model', reply);
+      localChatHistory.push({ role: "assistant", content: reply });
+    } else {
+      appendChatMessage('model', "ERROR: Respuesta local vacía de Ollama Core.");
     }
-
-    const candidate = data.candidates?.[0]; 
-    const content = candidate?.content;
-    if (content) {
-      chatMessages.push(content); 
-      
-      if (content.parts) {
-        for (const part of content.parts) {
-          if (part.text) {
-            appendChatMessage('model', part.text);
-          }
-          if (part.functionCall) {
-            const resultText = executeBiocoachAction(part.functionCall);
-            
-            chatMessages.push({
-              role: "tool",
-              parts: [{
-                functionResponse: {
-                  name: part.functionCall.name,
-                  response: { status: "success", result: resultText || "Métrica procesada" }
-                }
-              }]
-            });
-          }
-        }
-      }
-    } else { 
-      appendChatMessage('model', "ERROR: Respuesta estructural vacía del cerebro central."); 
-    }
-  } catch (err) { 
-    appendChatMessage('model', `CRITICAL: ${err.message}`); 
+  } catch (err) {
+    appendChatMessage('model', `LOCAL SYSTEM CRITICAL: ${err.message}`);
   }
   finally { btn.disabled = false; inputEl.disabled = false; inputEl.focus(); }
-}
-
-function executeBiocoachAction(call) {
-  if (call.name === "update_metric") {
-    const { metric, value } = call.args; const v = Number(value);
-    if (metric === 'sleep') currentEntry.sleep = v;
-    else if (metric === 'meditation') currentEntry.meditation = v;
-    else if (metric === 'reflux') currentEntry.reflux = v;
-    else if (metric === 'weight') currentEntry.weight = v;
-    else if (metric === 'videos') currentEntry.videos = v;
-    else if (metric === 'courses') currentEntry.courses = v;
-    else if (metric === 'banana') currentEntry.consts.banana = v;
-    else if (metric === 'eggs') currentEntry.consts.eggs = v;
-    
-    renderDashboard(); saveActiveEntry();
-    appendChatMessage('system-action', `[TOOL EXEC] Métrica '${metric}' alterada en caliente a: ${value}`);
-    return `Métrica ${metric} actualizada con éxito al valor ${value}`;
-  }
-  return "Métrica no compatible";
 }
 
 function bootstrap() {
@@ -942,4 +862,3 @@ bootstrap();
 </script>
 </body>
 </html>
-```eof
