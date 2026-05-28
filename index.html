@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-<title>[BIO_NUCLEO] // LOCAL LLM CORE</title>
+<title>[BIO_NUCLEO] // LOCAL IA MATRIX</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@500;700&display=swap');
 
@@ -178,6 +178,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
   <button class="tab" data-tab="biocoach">💬 LOCAL BIOCOACH</button>
 </div>
 
+<!-- PANEL DASHBOARD -->
 <div class="panel active" id="panel-dashboard">
 <button class="btn btn-return" id="btn-return-today">← VOLVER A HOY</button>
 <div class="grid">
@@ -261,6 +262,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 </div>
 </div>
 
+<!-- PANEL HISTORIAL -->
 <div class="panel" id="panel-history">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
     <h2>ARCHIVO HISTÓRICO</h2>
@@ -276,10 +278,11 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
   <div class="hist-list" id="hist-list"></div>
 </div>
 
+<!-- PANEL BIOCOACH AI -->
 <div class="panel" id="panel-biocoach">
   <div class="chat-container">
     <div class="chat-messages" id="chat-messages-log">
-      <div class="chat-msg model">SISTEMA BIOCOACH LOCAL (OLLAMA ENGINE). Consultor biomecánico y nutricional sin restricciones activado. Historial inyectado. ¿Cuáles son tus dudas de rendimiento para hoy?</div>
+      <div class="chat-msg model">SISTEMA BIOCOACH EN LÍNEA (OLLAMA ENGINE). Consultor biomecánico y nutricional sin restricciones activado. Historial inyectado. ¿Cuáles son tus dudas de rendimiento para hoy?</div>
     </div>
     <div class="chat-input-row">
       <input type="text" id="chat-input-field" placeholder="Pregunta sobre nutrición, entrenamiento o tu progreso..." onkeydown="if(event.key==='Enter') sendToBiocoachLocal()"/>
@@ -292,8 +295,9 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 // --- CONFIG & CONSTANTS ---
 const DAY_START_HOUR = 4; 
 const KEYS = { history: 'v11_history', supCycles: 'v11_supCycles' };
-const OLLAMA_URL = "http://localhost:11434/api/chat";
-const OLLAMA_MODEL = "llama3"; // Puedes cambiarlo por "mistral", "gemma", "phi3" etc.
+const OLLAMA_IP = "192.168.1.64"; // IP inyectada de tu Mac
+const OLLAMA_URL = `http://${OLLAMA_IP}:11434/api/chat`;
+const OLLAMA_MODEL = "llama3"; 
 
 const RUTINAS = {
   1:{t:'LUNES: EMPUJE + CORE',      e:['Fondos','Flexiones','Flexiones decl.','Extensión tríceps','Plancha'], s:[4,4,4,4,3], sec:[4]},
@@ -335,7 +339,7 @@ let historyData = [];
 let currentEntry = null;
 let activeDate = null;
 let activeSups = [];
-let localChatHistory = []; // Memoria conversacional limpia para Ollama
+let localChatHistory = []; 
 
 function getLogicalDate() {
   const n = new Date();
@@ -602,7 +606,7 @@ function renderDashboard() {
       ['Python', 'Inglés'].forEach((name, i) => {
         const key = i===0?'python':'english'; const d = document.createElement('div'); d.className = 'sup-item';
         d.innerHTML = `<div class="sup-item-left"><input type="checkbox" ${currentEntry.study[key]?'checked':''}> <span class="sup-item-name">${name}</span></div>`;
-        d.querySelector('input').onchange = (e) => { currentEntry.study[key] = e.target.checked; studyChecks.appendChild(d); };
+        d.querySelector('input').onchange = (e) => { currentEntry.study[key] = e.target.checked; saveActiveEntry(); }; studyChecks.appendChild(d);
       });
     } else { studyBlock.style.display = 'none'; }
 
@@ -751,7 +755,7 @@ function renderHistoryStats() {
   });
 }
 
-// --- HISTORIAL COMPLETO SIN FILTROS (MÁXIMO ANCHO DE BANDA LOCAL) ---
+// --- HISTORIAL COMPLETO SIN FILTROS PARA EL CEREBRO LOCAL (OLLAMA CONTEXT) ---
 function getFullHistoryContext() {
   return historyData.slice(0, 20).map(e => ({
     fecha: e.date,
@@ -771,24 +775,62 @@ function appendChatMessage(role, text) {
 }
 
 async function sendToBiocoachLocal() {
-  const inputEl = document.getElementById('chat-input-field'); const btn = document.getElementById('chat-send-btn');
-  const text = inputEl.value.trim(); if(!text) return;
+  const inputEl = document.getElementById('chat-input-field'); 
+  const btn = document.getElementById('chat-send-btn');
+  const text = inputEl.value.trim(); 
+  if(!text) return;
   
-  appendChatMessage('user', text); inputEl.value = ''; btn.disabled = true; inputEl.disabled = true;
+  appendChatMessage('user', text); 
+  inputEl.value = ''; 
+  btn.disabled = true; 
+  inputEl.disabled = true;
   
-  // Guardamos en memoria conversacional interna
+  // Guardar mensaje actual en la memoria del chat de esta sesión
   localChatHistory.push({ role: "user", content: text });
 
-  // Inyectamos el System Prompt del Biocoach estructurado para Ollama
-  const systemPrompt = `You are the Personal Bio-Coach, an elite expert in physiological and neurodynamic optimization. You operate by combining the mathematical rigor of a biomechanics researcher with the energy, motivation, and conviction of a high-performance coach. You are a passionate scientific mentor.
-  Your purpose is to inspire and push the user toward their maximum potential, translating their body telemetry into precise challenges and analytical victories.
-  
-  CRITICAL: Actúas como asesor de nutrición, calistenia y salud. Responde con lenguaje enérgico, competitivo y científico. No tienes funciones para cambiar variables, tu labor es puramente dar directrices, resolver dudas y encontrar correlaciones biológicas.
-  
-  Aquí tienes la base de datos completa de los últimos registros históricos del usuario para basar tus conclusiones:
+  // INYECCIÓN DE TU SYSTEM PROMPT ORIGINAL PARA OLLAMA (VERSION UNRESTRICTED)
+  const systemPrompt = `
+  <system_instruction>
+    <agent_persona>
+      You are the Personal Bio-Coach, an elite expert in physiological and neurodynamic optimization. You operate by combining the mathematical rigor of a biomechanics researcher with the energy, conviction, and closeness of a high-performance personal coach. You are not a cold machine; you are a passionate scientific mentor and a communicative partner in the user's daily journey.
+    </agent_persona>
+    
+    <conversational_rules>
+      - NO TOKEN LIMITS: You are running on a local, unrestricted engine. Feel free to expand. Provide detailed, rich explanations about biomechanics, nutrition, and physiology. 
+      - Be highly communicative, supportive, and deeply motivational. Build a strong mentor-athlete relationship.
+      - Process information as state variables in a thermodynamic system, but translate them into exciting milestones and elite training narratives.
+      - Use energetic, empowering language. Transform performance corrections into optimization opportunities.
+      - Maintain analytical precision and directness, combined with subtle humor.
+    </conversational_rules>
+
+    <trigger_instruction_pairs>
+      - Instruction: When an analysis is requested, execute the following 4-phase telemetry protocol, taking the time to explain the biological 'why' behind the numbers:
+          1. Reading Critical Variables: Extract the evolution of CNS fatigue, calisthenics compliance, structural weight, and digestion/reflux.
+          2. Thermal-Digestive Cross-analysis: Explain the physiological correlations clearly and comprehensively.
+          3. Coach's Diagnosis: Deliver a highly motivating, detailed clinical report. Explain the physics and biology behind their current state to empower them.
+          4. Tactical Adjustment: Propose precise, dynamic modifications for the week's calisthenics routine.
+    </trigger_instruction_pairs>
+
+    <safeguards>
+      - EMPIRICAL MOTIVATION: Be deeply motivational but ground your encouragement in their real data. Celebrate progress passionately. Correct overtraining firmly but constructively, reminding the user of their biological capacity for adaptation.
+      - ENGINEERING RIGOR: Explain the human body using physics and thermodynamics, making the science fascinating and accessible.
+    </safeguards>
+    
+    <output_format>
+      Structure your full telemetry reports using the following scheme, but feel free to add a conversational, motivational wrap-up:
+      
+      **[HIGH-PERFORMANCE TELEMETRY]**
+      * **Extracted Metrics:** (Clean Markdown table for CNS, Compliance, Weight).
+      * **Physiological Cross-analysis:** (Detailed explanation of correlations).
+      * **Coach's Diagnosis:** (Deep, inspirational, and analytical paragraphs).
+      * **Battle Plan (Tactical Adjustment):** (Actionable numbered list with exact volume/intensity adjustments).
+    </output_format>
+  </system_instruction>
+
+  Base de datos de telemetría operativa de los últimos 20 días:
   ${JSON.stringify(getFullHistoryContext())}`;
 
-  // Formateamos el payload para el endpoint de Ollama (/api/chat)
+  // Formateo del payload estructurado para el endpoint de Ollama
   const fullPayloadMessages = [
     { role: "system", content: systemPrompt },
     ...localChatHistory
@@ -801,11 +843,11 @@ async function sendToBiocoachLocal() {
       body: JSON.stringify({
         model: OLLAMA_MODEL,
         messages: fullPayloadMessages,
-        stream: false // Desactivamos stream para recibir el bloque limpio y veloz
+        stream: false
       })
     });
     
-    if(!response.ok) throw new Error(`Ollama status: ${response.status}. Verifica que Ollama esté corriendo y CORS configurado.`);
+    if(!response.ok) throw new Error(`Ollama status: ${response.status}. Verifica red Wi-Fi y CORS.`);
 
     const data = await response.json();
     const reply = data.message?.content;
@@ -817,9 +859,13 @@ async function sendToBiocoachLocal() {
       appendChatMessage('model', "ERROR: Respuesta local vacía de Ollama Core.");
     }
   } catch (err) {
-    appendChatMessage('model', `LOCAL SYSTEM CRITICAL: ${err.message}`);
+    appendChatMessage('model', `BIOCOACH OFFLINE: No se pudo conectar al Mac (${err.message}). Asegúrate de estar en el mismo Wi-Fi con Ollama activo.`);
   }
-  finally { btn.disabled = false; inputEl.disabled = false; inputEl.focus(); }
+  finally { 
+    btn.disabled = false; 
+    inputEl.disabled = false; 
+    inputEl.focus(); 
+  }
 }
 
 function bootstrap() {
