@@ -86,19 +86,32 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 .const-btn{width:28px;height:28px;background:var(--surface2);border:1px solid var(--amber-dark);color:var(--amber);cursor:pointer;font-family:'Share Tech Mono',monospace;}
 .const-val{font-family:'Rajdhani',sans-serif;font-size:1.2rem;color:var(--green);width:20px;text-align:center;}
 
-/* HISTORIAL STATS & LIST */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin-bottom:1.25rem;}
-.stat-box{border:1px solid var(--amber-dark);background:var(--surface);padding:.5rem;cursor:pointer;position:relative;}
-.stat-box.lila{border-color:var(--purple);background:rgba(88,28,135,0.1);}
-.stat-box.azul{border-color:var(--blue);background:rgba(59,130,246,0.1);}
-.stat-num{font-family:'Rajdhani',sans-serif;font-size:1.6rem;font-weight:700;line-height:1;}
-.stat-label{font-size:.53rem;color:var(--amber-dim);margin-top:.2rem;line-height:1.2;text-transform:uppercase;}
-.stat-graph{width:100%;height:30px;margin-top:5px;display:none;}
+/* HISTORIAL STATS & CURVED METRIC GRAPHICS */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:.5rem;margin-bottom:1.25rem;}
+.stat-box{border:1px solid var(--amber-dark);background:var(--surface);padding:.6rem;cursor:pointer;position:relative;transition:all .2s ease;}
+.stat-box:hover{border-color:var(--amber);}
+.stat-box.lila{border-color:var(--purple);background:rgba(88,28,135,0.05);}
+.stat-box.azul{border-color:var(--blue);background:rgba(59,130,246,0.05);}
+.stat-box.verde{border-color:var(--green);background:rgba(34,197,94,0.05);}
+.stat-num{font-family:'Rajdhani',sans-serif;font-size:1.7rem;font-weight:700;line-height:1;}
+.stat-label{font-size:.55rem;color:var(--amber-dim);margin-top:.2rem;line-height:1.2;text-transform:uppercase;font-weight:bold;letter-spacing:0.5px;}
+
+/* CONTENEDOR DE GRÁFICA DETALLADA */
+.stat-graph{
+  width:100%; 
+  height:75px; 
+  margin-top:8px; 
+  display:none; 
+  background:#050505; 
+  border:1px dashed #222;
+  padding:4px;
+}
 .stat-graph.show{display:block;}
 
 .val-green{color:var(--green);}
 .val-red{color:var(--red);}
 .val-amber{color:var(--amber);}
+.val-blue{color:var(--blue);}
 
 /* MONTHLY TABS */
 .month-header { background: var(--surface2); padding: 0.6rem; border: 1px solid var(--amber-dark); cursor: pointer; font-weight: bold; margin-bottom: 0.3rem; display: flex; justify-content: space-between; align-items: center; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px;}
@@ -112,11 +125,11 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 .hist-perf{font-size:.65rem;color:var(--green);margin-top:.2rem;}
 .hist-edit-btn{background:var(--surface2);color:var(--amber);border:1px solid var(--amber-dim);padding:.3rem .6rem;font-family:'Share Tech Mono';font-size:.7rem;cursor:pointer;}
 
-/* BIOCOACH CHAT INTERFACE - MEJORAS DE RESPONSIVIDAD Y DINÁMICA MÓVIL */
+/* BIOCOACH CHAT INTERFACE */
 .chat-container { 
   display: flex; 
   flex-direction: column; 
-  height: calc(100dvh - 200px); /* dVH se adapta en tiempo real cuando se levanta el teclado virtual */
+  height: calc(100dvh - 200px); 
   min-height: 400px;
   border: 1px solid var(--purple); 
   background: var(--surface); 
@@ -133,7 +146,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
   flex: 1; 
   border: 1px solid var(--purple); 
   background: #000; 
-  color: #ffffff !important; /* Fuerza el color de fuente a blanco puro */
+  color: #ffffff !important; 
   padding: .75rem; 
   font-family: 'Share Tech Mono', monospace; 
   outline: none; 
@@ -174,6 +187,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
   <button class="tab" data-tab="biocoach">💬 BIOCOACH</button>
 </div>
 
+<!-- PANEL DASHBOARD -->
 <div class="panel active" id="panel-dashboard">
 <button class="btn btn-return" id="btn-return-today">← VOLVER A HOY</button>
 <div class="grid">
@@ -257,6 +271,7 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
 </div>
 </div>
 
+<!-- PANEL HISTORIAL -->
 <div class="panel" id="panel-history">
   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem;">
     <h2>ARCHIVO HISTÓRICO</h2>
@@ -266,12 +281,13 @@ input[type="checkbox"]{accent-color:var(--amber);width:18px;height:18px;}
       <input type="file" id="file-import" accept=".json" style="display:none;"/>
     </div>
   </div>
-  <p style="font-size:.6rem;color:var(--amber-dim);margin-bottom:1rem;">* Click en los recuadros para desplegar gráfica de 14 días.</p>
+  <p style="font-size:.6rem;color:var(--amber-dim);margin-bottom:1rem;">* Click en los recuadros para desplegar/ocultar analíticas detalladas de los últimos 14 días.</p>
   <div class="stats-grid" id="stats-grid"></div>
   <h3 style="font-size:.8rem;margin-bottom:.5rem;border-bottom:1px solid var(--amber-dark);padding-bottom:.3rem;margin-top:1rem;">REGISTRO DIARIO (AGRUPADO)</h3>
   <div class="hist-list" id="hist-list"></div>
 </div>
 
+<!-- PANEL BIOCOACH AI -->
 <div class="panel" id="panel-biocoach">
   <div class="chat-container">
     <div class="chat-messages" id="chat-messages-log">
@@ -330,7 +346,7 @@ let historyData = [];
 let currentEntry = null;
 let activeDate = null;
 let activeSups = [];
-let chatMessages = []; // Memoria volátil conversacional para la API de Gemini
+let chatMessages = []; 
 
 function getLogicalDate() {
   const n = new Date();
@@ -357,7 +373,7 @@ function sanitizeEntry(entry) {
           if(!entry.calWeight[i] || !Array.isArray(entry.calWeight[i]) || entry.calWeight[i].length !== sLength) entry.calWeight[i] = new Array(sLength).fill(0);
       });
   } else { entry.calReps = []; entry.calWeight = []; }
-  entry.weight = entry.weight || '';
+  entry.weight = entry.weight !== undefined ? entry.weight : '';
   entry.sleep = Number(entry.sleep) || 0;
   entry.meditation = Number(entry.meditation) || 0;
   entry.reflux = Number(entry.reflux) || 0;
@@ -607,15 +623,68 @@ function renderDashboard() {
   } catch (error) { console.error("Error Dashboard:", error); }
 }
 
-// --- GRÁFICOS SVG Y UTILS ---
+// --- CURVED AREA/LINE HIGH-PERFORMANCE SVG ENGINE ---
 function generateSVG(dataArr, colorStr) {
-  if(!dataArr || dataArr.length < 2) return '';
-  const max = Math.max(...dataArr) || 1; const min = Math.min(...dataArr) || 0; const range = max - min || 1;
-  const width = 100, height = 30;
-  const pts = dataArr.map((val, i) => {
-      const x = (i / (dataArr.length - 1)) * width; const y = height - (((val - min) / range) * height); return `${x},${y}`;
-  }).join(' ');
-  return `<svg viewBox="0 -5 100 40" style="width:100%;height:100%;overflow:visible;"><polyline fill="none" stroke="${colorStr}" stroke-width="2" points="${pts}"/></svg>`;
+  if(!dataArr || dataArr.length < 1) return '';
+  
+  // Rellenar valores si el array es muy corto para evitar errores de renderizado
+  if(dataArr.length === 1) dataArr = [dataArr[0], dataArr[0]];
+
+  const width = 500;
+  const height = 100;
+  
+  const maxVal = Math.max(...dataArr);
+  const minVal = Math.min(...dataArr);
+  const range = (maxVal - minVal) === 0 ? 1 : (maxVal - minVal);
+  
+  // Añadir márgenes dinámicos superiores e inferiores dentro de la caja de la gráfica
+  const padTop = 15;
+  const padBottom = 15;
+  const adjHeight = height - padTop - padBottom;
+
+  const points = dataArr.map((val, i) => {
+    const x = (i / (dataArr.length - 1)) * width;
+    const y = padTop + (adjHeight - (((val - minVal) / range) * adjHeight));
+    return {x, y};
+  });
+
+  // Generar el path curvo suave usando interpolación bezier suavizada
+  let pathD = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 0; i < points.length - 1; i++) {
+    const p0 = points[i];
+    const p1 = points[i + 1];
+    const cpX1 = p0.x + (p1.x - p0.x) / 3;
+    const cpY1 = p0.y;
+    const cpX2 = p0.x + 2 * (p1.x - p0.x) / 3;
+    const cpY2 = p1.y;
+    pathD += ` C ${cpX1} ${cpY1}, ${cpX2} ${cpY2}, ${p1.x} ${p1.y}`;
+  }
+
+  // Crear el cierre inferior de la forma para generar el relleno con degradado de área
+  const areaD = `${pathD} L ${points[points.length-1].x} ${height} L ${points[0].x} ${height} Z`;
+
+  // Retornar estructura vectorial pura con grid industrial de fondo
+  return `
+    <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; display:block;" preserveAspectRatio="none">
+      <defs>
+        <linearGradient id="grad-${colorStr.replace('#','')}" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="${colorStr}" stop-opacity="0.25"/>
+          <stop offset="100%" stop-color="${colorStr}" stop-opacity="0.0"/>
+        </linearGradient>
+      </defs>
+      <!-- Rejilla Horizontales de Referencia -->
+      <line x1="0" y1="${height*0.25}" x2="${width}" y2="${height*0.25}" stroke="#151515" stroke-width="1" stroke-dasharray="2,4"/>
+      <line x1="0" y1="${height*0.5}" x2="${width}" y2="${height*0.5}" stroke="#151515" stroke-width="1" stroke-dasharray="2,4"/>
+      <line x1="0" y1="${height*0.75}" x2="${width}" y2="${height*0.75}" stroke="#151515" stroke-width="1" stroke-dasharray="2,4"/>
+      
+      <!-- Trayectoria del Área y Línea de Evolución -->
+      <path d="${areaD}" fill="url(#grad-${colorStr.replace('#','')})"/>
+      <path d="${pathD}" fill="none" stroke="${colorStr}" stroke-width="2.5" stroke-linecap="round"/>
+      
+      <!-- Nodos de Datos Terminales -->
+      ${points.map(p => `<circle cx="${p.x}" cy="${p.y}" r="2" fill="#000" stroke="${colorStr}" stroke-width="1.5"/>`).join('')}
+    </svg>
+  `;
 }
 
 function getThresholdClass(val, thRed, thGreen, invert=false) {
@@ -627,39 +696,74 @@ window.toggleGraph = function(id) { const el = document.getElementById(id); if(e
 
 // --- RENDER HISTORIAL ---
 function renderHistoryStats() {
-  const h = historyData; let currentStreak = 0, maxStreak = 0; let totalReps = 0, maxReps = 0, workoutDays = 0; let totalSleep = 0, recentRefluxSum = 0, recentRefluxDays = 0;
-  const arrCommit = [], arrReps = [], arrSleep = [], arrReflux = [];
+  const h = historyData; 
+  let currentStreak = 0, maxStreak = 0; 
+  let totalReps = 0, maxReps = 0, workoutDays = 0; 
+  let totalSleep = 0, recentRefluxSum = 0, recentRefluxDays = 0;
+  let totalWeight = 0, weightDays = 0, lastValidWeight = '—';
+
+  const arrCommit = [], arrReps = [], arrSleep = [], arrReflux = [], arrWeight = [];
   
   [...h].reverse().forEach(e => { if(e.perfect) { currentStreak++; maxStreak = Math.max(maxStreak, currentStreak); } else currentStreak = 0; });
   const actStreak = h.length && h[0].perfect ? currentStreak : 0; 
   const limit14 = h.slice(0, 14).reverse();
   
   h.forEach((e, i) => {
-    totalSleep += (e.sleep || 0); let dayReps = 0;
+    totalSleep += (e.sleep || 0); 
+    let dayReps = 0;
     if(e.calReps && e.calReps.length) { try { e.calReps.forEach(arr => { if(Array.isArray(arr)) dayReps += arr.reduce((a,b)=>a+b,0); }); } catch(err) {} }
     if(dayReps > 0) { totalReps += dayReps; workoutDays++; maxReps = Math.max(maxReps, dayReps); }
     if(i < 7) { recentRefluxSum += (e.reflux || 0); recentRefluxDays++; }
+    
+    // Extracción de variables de masa ponderada
+    if(e.weight && !isNaN(parseFloat(e.weight))) {
+      const w = parseFloat(e.weight);
+      totalWeight += w;
+      weightDays++;
+      if(lastValidWeight === '—') lastValidWeight = w.toFixed(1) + ' kg';
+    }
   });
 
   limit14.forEach(e => {
-      arrCommit.push(calcCommit(e)); arrSleep.push(e.sleep || 0); arrReflux.push(e.reflux || 0);
-      let dr = 0; if(e.calReps) e.calReps.forEach(arr => { if(Array.isArray(arr)) dr += arr.reduce((a,b)=>a+b,0); }); arrReps.push(dr);
+      arrCommit.push(calcCommit(e)); 
+      arrSleep.push(e.sleep || 0); 
+      arrReflux.push(e.reflux || 0);
+      
+      let dr = 0; 
+      if(e.calReps) e.calReps.forEach(arr => { if(Array.isArray(arr)) dr += arr.reduce((a,b)=>a+b,0); }); 
+      arrReps.push(dr);
+
+      if(e.weight && !isNaN(parseFloat(e.weight))) {
+        arrWeight.push(parseFloat(e.weight));
+      } else if(arrWeight.length > 0) {
+        arrWeight.push(arrWeight[arrWeight.length - 1]); // Repetir último peso válido para continuidad del vector
+      } else {
+        arrWeight.push(0);
+      }
   });
+
+  // Limpieza inicial si el vector de peso arranca en cero absoluto
+  const firstValidWeight = arrWeight.find(w => w > 0) || 75;
+  for(let k=0; k<arrWeight.length; k++) { if(arrWeight[k] === 0) arrWeight[k] = firstValidWeight; }
 
   const avgC = h.length ? Math.round(h.reduce((a,e)=>a+calcCommit(e),0)/h.length) : 0;
   const avgReps = workoutDays ? Math.round(totalReps / workoutDays) : 0;
   const avgSleep = h.length ? (totalSleep / h.length).toFixed(1) : 0;
   const avgReflux = recentRefluxDays ? (recentRefluxSum / recentRefluxDays).toFixed(1) : 0;
+  const avgWeight = weightDays ? (totalWeight / weightDays).toFixed(1) : '—';
   
   document.getElementById('stats-grid').innerHTML = `
     <div class="stat-box lila"><div class="stat-num ${getThresholdClass(actStreak, 3, 5)}">${actStreak}</div><div class="stat-label">RACHA ACTIVA</div></div>
     <div class="stat-box lila"><div class="stat-num ${getThresholdClass(maxStreak, 3, 5)}">${maxStreak}</div><div class="stat-label">RÉCORD PERFECTO</div></div>
-    <div class="stat-box lila" onclick="toggleGraph('g-commit')"><div class="stat-num ${getThresholdClass(avgC, 50, 80)}">${avgC}%</div><div class="stat-label">COMPROMISO MEDIA</div><div id="g-commit" class="stat-graph">${generateSVG(arrCommit, '#a855f7')}</div></div>
-    <div class="stat-box azul" onclick="toggleGraph('g-sleep')"><div class="stat-num ${getThresholdClass(avgSleep, 6.5, 7.5)}">${avgSleep}</div><div class="stat-label">SUEÑO (MEDIA)</div><div id="g-sleep" class="stat-graph">${generateSVG(arrSleep, '#3b82f6')}</div></div>
-    <div class="stat-box azul" onclick="toggleGraph('g-reps')"><div class="stat-num ${getThresholdClass(avgReps, 40, 80)}">${avgReps}</div><div class="stat-label">REPS (MEDIA)</div><div id="g-reps" class="stat-graph">${generateSVG(arrReps, '#3b82f6')}</div></div>
-    <div class="stat-box azul"><div class="stat-num val-blue" style="color:var(--blue);">${maxReps}</div><div class="stat-label">REPS (RÉCORD)</div></div>
-    <div class="stat-box"><div class="stat-num val-amber">${h.length}</div><div class="stat-label">DÍAS REGISTRO</div></div>
-    <div class="stat-box" onclick="toggleGraph('g-reflux')"><div class="stat-num ${getThresholdClass(avgReflux, 4, 1, true)}">${avgReflux}</div><div class="stat-label">REFLUJO (7d)</div><div id="g-reflux" class="stat-graph">${generateSVG(arrReflux, '#f59e0b')}</div></div>
+    
+    <div class="stat-box lila" onclick="toggleGraph('g-commit')"><div class="stat-num ${getThresholdClass(avgC, 50, 80)}">${avgC}%</div><div class="stat-label">COMPROMISO (Ø)</div><div id="g-commit" class="stat-graph">${generateSVG(arrCommit, '#a855f7')}</div></div>
+    <div class="stat-box azul" onclick="toggleGraph('g-sleep')"><div class="stat-num ${getThresholdClass(avgSleep, 6.5, 7.5)}">${avgSleep}h</div><div class="stat-label">SUEÑO (Ø)</div><div id="g-sleep" class="stat-graph">${generateSVG(arrSleep, '#3b82f6')}</div></div>
+    
+    <div class="stat-box verde" onclick="toggleGraph('g-weight')"><div class="stat-num val-green">${lastValidWeight}</div><div class="stat-label">PESO ACTUAL</div><div id="g-weight" class="stat-graph">${generateSVG(arrWeight, '#22c55e')}</div></div>
+    <div class="stat-box azul" onclick="toggleGraph('g-reps')"><div class="stat-num ${getThresholdClass(avgReps, 40, 80)}">${avgReps}</div><div class="stat-label">REPS (Ø ENTRENAMIENTO)</div><div id="g-reps" class="stat-graph">${generateSVG(arrReps, '#3b82f6')}</div></div>
+    
+    <div class="stat-box azul"><div class="stat-num val-blue">${maxReps}</div><div class="stat-label">REPS (RÉCORD MASTER)</div></div>
+    <div class="stat-box" onclick="toggleGraph('g-reflux')"><div class="stat-num ${getThresholdClass(avgReflux, 4, 1, true)}">${avgReflux}</div><div class="stat-label">REFLUJO (7d Ø)</div><div id="g-reflux" class="stat-graph">${generateSVG(arrReflux, '#f59e0b')}</div></div>
   `;
 
   const listEl = document.getElementById('hist-list'); listEl.innerHTML = ''; const grouped = {};
@@ -677,10 +781,11 @@ function renderHistoryStats() {
     grouped[monthKey].forEach(e => {
       const row = document.createElement('div'); const score = calcCommit(e);
       const scoreColor = score >= 80 ? 'var(--green)' : (score < 50 ? 'var(--red)' : 'var(--amber)');
+      const weightDisplay = e.weight ? ` | ${e.weight}kg` : '';
       row.className = `hist-row ${e.perfect ? 'perfect' : ''}`;
       row.innerHTML = `
         <div>
-          <div class="hist-date">${e.date} &nbsp;<span style="color:${scoreColor};font-size:.7rem;">[${score}%]</span></div>
+          <div class="hist-date">${e.date} &nbsp;<span style="color:${scoreColor};font-size:.7rem;">[${score}%]</span><span style="color:var(--green);font-size:.7rem;">${weightDisplay}</span></div>
           ${e.perfect ? '<div class="hist-perf">★ DÍA PERFECTO</div>' : ''}
         </div>
         <button class="hist-edit-btn">EDITAR</button>
@@ -706,7 +811,7 @@ function getCompressedHistory() {
     reflux: e.reflux || 0,
     perfect: e.perfect ? 1 : 0,
     commit: calcCommit(e),
-    notes: e.notes ? e.notes.substring(0, 100) : undefined // Recorta notas largas para ahorrar ancho de banda
+    notes: e.notes ? e.notes.substring(0, 100) : undefined 
   }));
 }
 
@@ -723,8 +828,6 @@ async function sendToBiocoach() {
   appendChatMessage('user', text); inputEl.value = ''; btn.disabled = true; inputEl.disabled = true;
   chatMessages.push({ role: "user", parts: [{ text: text }] });
 
-  // APLICACIÓN DEL PROTOCOLO DE TOKENS: Ventana Deslizable (Sliding Window)
-  // Mantiene únicamente las últimas 3 preguntas y 3 respuestas para evitar desbordar la cuota
   const slidingWindowMessages = chatMessages.slice(-6);
 
   try {
@@ -732,7 +835,7 @@ async function sendToBiocoach() {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ 
         messages: slidingWindowMessages, 
-        app_history: getCompressedHistory() // Envía telemetría minificada
+        app_history: getCompressedHistory() 
       })
     });
     
@@ -839,3 +942,4 @@ bootstrap();
 </script>
 </body>
 </html>
+```eof
